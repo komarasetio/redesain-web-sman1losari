@@ -1,0 +1,6 @@
+{
+  "name": "Portal Redesain SMAN 1 Losari",
+  "description": "Desain ulang modern dan interaktif untuk website sekolah SMA Negeri 1 Losari dengan panduan warna baru, navigasi desktop modern, dan struktur section kontemporer.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
