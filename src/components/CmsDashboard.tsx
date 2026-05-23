@@ -1,0 +1,696 @@
+import React, { useState } from 'react';
+import { 
+  FileText, 
+  Plus, 
+  Trash2, 
+  Edit2, 
+  RotateCcw, 
+  Check, 
+  X, 
+  Calendar, 
+  Bookmark, 
+  Briefcase, 
+  Library, 
+  Sparkles,
+  Camera,
+  Image,
+  User,
+  Activity,
+  Award
+} from 'lucide-react';
+import { useSchoolData } from '../lib/schoolDataStore';
+import { NewsItem, TeacherItem, FacilityItem, ActivityItem } from '../types';
+
+export default function CmsDashboard() {
+  const { data, addItem, editItem, deleteItem, resetToDefault } = useSchoolData();
+  const [activeSubTab, setActiveSubTab] = useState<'news' | 'announcements' | 'blogs' | 'facilities' | 'teachers' | 'activities' | 'gallery'>('news');
+  
+  // Editing state controls
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+
+  // Form states
+  const [newsForm, setNewsForm] = useState<Partial<NewsItem>>({
+    title: '',
+    category: 'Berita',
+    excerpt: '',
+    imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=400',
+    date: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+  });
+  
+  const [announcementForm, setAnnouncementForm] = useState({
+    title: '',
+    date: 'Terbit ' + new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }),
+    type: 'Penting'
+  });
+
+  const [blogForm, setBlogForm] = useState({
+    title: '',
+    author: '',
+    date: new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
+  });
+
+  const [facilityForm, setFacilityForm] = useState<Partial<FacilityItem>>({
+    name: '',
+    description: '',
+    imageUrl: 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=400'
+  });
+
+  const [teacherForm, setTeacherForm] = useState<Partial<TeacherItem>>({
+    name: '',
+    role: '',
+    subject: '',
+    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=300'
+  });
+
+  const [activityForm, setActivityForm] = useState<Partial<ActivityItem>>({
+    title: '',
+    date: 'Latihan Rutin',
+    category: 'Seni',
+    imageUrl: 'https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?q=80&w=400'
+  });
+
+  const [galleryForm, setGalleryForm] = useState({
+    title: '',
+    tag: 'akademik' as 'akademik' | 'eskul' | 'fasilitas',
+    img: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=400'
+  });
+
+  const handleResetAll = () => {
+    if (confirm('Apakah Anda yakin ingin menyetel ulang seluruh data website kembali ke setelan pabrik/awal SMAN 1 Losari? Semua tambahan data kustom Anda akan hilang.')) {
+      resetToDefault();
+    }
+  };
+
+  const startEdit = (id: string, type: string) => {
+    setEditingId(id);
+    setIsAdding(false);
+    
+    if (type === 'news') {
+      const item = data.news.find(i => i.id === id);
+      if (item) setNewsForm(item);
+    } else if (type === 'announcements') {
+      const item = data.announcements.find(i => i.id === id);
+      if (item) setAnnouncementForm(item);
+    } else if (type === 'blogs') {
+      const item = data.blogs.find(i => i.id === id);
+      if (item) setBlogForm(item);
+    } else if (type === 'facilities') {
+      const item = data.facilities.find(i => i.id === id);
+      if (item) setFacilityForm(item);
+    } else if (type === 'teachers') {
+      const item = data.teachers.find(i => i.id === id);
+      if (item) setTeacherForm(item);
+    } else if (type === 'activities') {
+      const item = data.activities.find(i => i.id === id);
+      if (item) setActivityForm(item);
+    } else if (type === 'gallery') {
+      const item = data.gallery.find(i => i.id === id);
+      if (item) setGalleryForm(item);
+    }
+  };
+
+  const saveEdit = (type: 'news' | 'announcements' | 'blogs' | 'facilities' | 'teachers' | 'activities' | 'gallery') => {
+    if (!editingId) return;
+
+    if (type === 'news') {
+      editItem('news', editingId, newsForm);
+    } else if (type === 'announcements') {
+      editItem('announcements', editingId, announcementForm);
+    } else if (type === 'blogs') {
+      editItem('blogs', editingId, blogForm);
+    } else if (type === 'facilities') {
+      editItem('facilities', editingId, facilityForm);
+    } else if (type === 'teachers') {
+      editItem('teachers', editingId, teacherForm);
+    } else if (type === 'activities') {
+      editItem('activities', editingId, activityForm);
+    } else if (type === 'gallery') {
+      editItem('gallery', editingId, galleryForm);
+    }
+
+    setEditingId(null);
+  };
+
+  const handleCreate = (type: 'news' | 'announcements' | 'blogs' | 'facilities' | 'teachers' | 'activities' | 'gallery') => {
+    const id = `${type}-${Date.now()}`;
+    if (type === 'news') {
+      addItem('news', { ...newsForm, id } as any);
+      // Reset form
+      setNewsForm({
+        title: '', category: 'Berita', excerpt: '',
+        imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=400',
+        date: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+      });
+    } else if (type === 'announcements') {
+      addItem('announcements', { ...announcementForm, id } as any);
+      setAnnouncementForm({
+        title: '', date: 'Terbit ' + new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }), type: 'Penting'
+      });
+    } else if (type === 'blogs') {
+      addItem('blogs', { ...blogForm, id } as any);
+      setBlogForm({
+        title: '', author: '', date: new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
+      });
+    } else if (type === 'facilities') {
+      addItem('facilities', { ...facilityForm, id } as any);
+      setFacilityForm({
+        name: '', description: '', imageUrl: 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=400'
+      });
+    } else if (type === 'teachers') {
+      addItem('teachers', { ...teacherForm, id } as any);
+      setTeacherForm({
+        name: '', role: '', subject: '', imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=300'
+      });
+    } else if (type === 'activities') {
+      addItem('activities', { ...activityForm, id } as any);
+      setActivityForm({
+        title: '', date: 'Latihan Rutin', category: 'Seni', imageUrl: 'https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?q=80&w=400'
+      });
+    } else if (type === 'gallery') {
+      addItem('gallery', { ...galleryForm, id } as any);
+      setGalleryForm({
+        title: '', tag: 'akademik', img: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=400'
+      });
+    }
+
+    setIsAdding(false);
+  };
+
+  const handleDelete = (type: 'news' | 'announcements' | 'blogs' | 'facilities' | 'teachers' | 'activities' | 'gallery', id: string) => {
+    if (confirm('Apakah Anda yakin ingin menghapus data item ini dari sistem?')) {
+      deleteItem(type, id);
+    }
+  };
+
+  const categories = [
+    { id: 'news', label: '📰 Berita Utama', icon: FileText, count: data.news.length },
+    { id: 'announcements', label: '📢 Pengumuman', icon: Bookmark, count: data.announcements.length },
+    { id: 'blogs', label: '✍️ Blog Guru', icon: Sparkles, count: data.blogs.length },
+    { id: 'facilities', label: '🏢 Fasilitas', icon: Library, count: data.facilities.length },
+    { id: 'teachers', label: '👩‍🏫 Guru / Staff', icon: User, count: data.teachers.length },
+    { id: 'activities', label: '⚽ Aktivitas / Eskul', icon: Activity, count: data.activities.length },
+    { id: 'gallery', label: '🖼️ Galeri Foto', icon: Image, count: data.gallery.length },
+  ];
+
+  return (
+    <div className="space-y-8" id="cms-dashboard-container">
+      
+      {/* 1. Welcoming header with dynamic states */}
+      <div className="bg-white rounded-2xl border border-slate-100 p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/50 rounded-full blur-3xl -z-10" />
+        <div className="space-y-2">
+          <span className="text-xs font-semibold tracking-wider text-indigo-600 uppercase">PUSAT KONTROL CONTENT (CMS)</span>
+          <h2 className="text-2xl font-semibold text-slate-900 tracking-tight">Simulator Manajemen Database Sekolah</h2>
+          <p className="text-slate-500 text-sm max-w-2xl">
+            Tambahkan, ubah, atau hapus berita penting, kalender pengumuman, data pendidik & sarana prasarana. Setiap perubahan data disimpan di lokal penyimpanan browser Anda dan akan langsung diterapkan di seluruh visualisasi website demo.
+          </p>
+        </div>
+        <button
+          onClick={handleResetAll}
+          className="flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs px-4 py-2.5 rounded-xl transition-all self-start cursor-pointer border border-red-200/50"
+          title="Kembalikan semua data ke setelan awal pabrikan"
+        >
+          <RotateCcw className="w-4 h-4" />
+          Setel Ulang Data Beranda
+        </button>
+      </div>
+
+      {/* Grid wrapper */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        {/* SIDE BAR SECTIONS SELECTOR */}
+        <div className="lg:col-span-1 space-y-2 bg-white p-4 rounded-2xl border border-slate-200/60 max-h-[500px] overflow-y-auto">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-2 block mb-3">Daftar Modul Konten</span>
+          {categories.map((cat) => {
+            const Icon = cat.icon;
+            const isTabActive = activeSubTab === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  setActiveSubTab(cat.id as any);
+                  setEditingId(null);
+                  setIsAdding(false);
+                }}
+                className={`w-full flex items-center justify-between px-3 py-3 text-xs font-bold rounded-xl transition-all text-left cursor-pointer ${
+                  isTabActive 
+                    ? 'bg-slate-900 text-white shadow-md' 
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Icon className={`w-4.5 h-4.5 ${isTabActive ? 'text-amber-400' : 'text-slate-400'}`} />
+                  <span>{cat.label}</span>
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${isTabActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'}`}>
+                  {cat.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* DETAILS CRUD BODY CONTENT */}
+        <div className="lg:col-span-3 bg-white p-6 md:p-8 rounded-2xl border border-slate-200/60 shadow-xs space-y-6">
+          
+          <div className="flex justify-between items-center pb-4 border-b border-slate-100">
+            <h3 className="font-extrabold text-slate-900 text-base md:text-lg flex items-center gap-2">
+              <span>Kelola Data {categories.find(c => c.id === activeSubTab)?.label.split(' ').slice(1).join(' ')}</span>
+            </h3>
+            
+            {!isAdding && !editingId && (
+              <button
+                onClick={() => setIsAdding(true)}
+                className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs px-3.5 py-2 rounded-xl transition-all cursor-pointer shadow-sm hover:shadow-xs"
+              >
+                <Plus className="w-4 h-4" />
+                Tambah Baru
+              </button>
+            )}
+          </div>
+
+          {/* DYNAMIC FORMS FOR CREATING / ADDING DATA */}
+          {(isAdding || editingId) && (
+            <div className="p-5 bg-slate-50 border border-slate-150 rounded-xl space-y-4">
+              <h4 className="font-black text-slate-900 text-xs uppercase tracking-wider text-indigo-600">
+                {isAdding ? 'Formulir Tambah Data Baru' : 'Formulir Edit Data Item'}
+              </h4>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                {/* 1. NEWS FORM FIELDS */}
+                {activeSubTab === 'news' && (
+                  <>
+                    <div className="md:col-span-2 flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Judul Berita</label>
+                      <input 
+                        type="text" 
+                        value={newsForm.title} 
+                        onChange={e => setNewsForm({...newsForm, title: e.target.value})}
+                        placeholder="Masukkan judul artikel berita..."
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.55">
+                      <label className="text-xs font-bold text-slate-700">Kategori</label>
+                      <select 
+                        value={newsForm.category}
+                        onChange={e => setNewsForm({...newsForm, category: e.target.value as any})}
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      >
+                        <option value="Berita">Berita Utama</option>
+                        <option value="Pengumuman">Pengumuman Terkini</option>
+                        <option value="Prestasi">Prestasi Karya</option>
+                        <option value="Eskul">Ekstrakurikuler</option>
+                      </select>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Tanggal Posting</label>
+                      <input 
+                        type="text" 
+                        value={newsForm.date} 
+                        onChange={e => setNewsForm({...newsForm, date: e.target.value})}
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Foto Ilustrasi URL</label>
+                      <input 
+                        type="text" 
+                        value={newsForm.imageUrl} 
+                        onChange={e => setNewsForm({...newsForm, imageUrl: e.target.value})}
+                        placeholder="https://images.unsplash.com/..."
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="md:col-span-2 flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Deskripsi / Ringkasan</label>
+                      <textarea 
+                        rows={3}
+                        value={newsForm.excerpt} 
+                        onChange={e => setNewsForm({...newsForm, excerpt: e.target.value})}
+                        placeholder="Tuliskan ringkasan singkat isi berita..."
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* 2. ANNOUNCEMENTS FORM */}
+                {activeSubTab === 'announcements' && (
+                  <>
+                    <div className="md:col-span-2 flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Nama Pengumuman / Memo</label>
+                      <input 
+                        type="text" 
+                        value={announcementForm.title} 
+                        onChange={e => setAnnouncementForm({...announcementForm, title: e.target.value})}
+                        placeholder="Contoh: Seleksi SPMB Gelombang II Dibuka"
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Tanggal / Deadline</label>
+                      <input 
+                        type="text" 
+                        value={announcementForm.date} 
+                        onChange={e => setAnnouncementForm({...announcementForm, date: e.target.value})}
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Label Warna</label>
+                      <select 
+                        value={announcementForm.type}
+                        onChange={e => setAnnouncementForm({...announcementForm, type: e.target.value})}
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      >
+                        <option value="Penting">Penting (Merah)</option>
+                        <option value="Ujian">Ujian (Emas)</option>
+                        <option value="Layanan">Layanan (Biru)</option>
+                        <option value="Umum">Umum (Slate)</option>
+                      </select>
+                    </div>
+                  </>
+                )}
+
+                {/* 3. BLOGS FORM */}
+                {activeSubTab === 'blogs' && (
+                  <>
+                    <div className="md:col-span-2 flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Judul Artikel Blog Guru</label>
+                      <input 
+                        type="text" 
+                        value={blogForm.title} 
+                        onChange={e => setBlogForm({...blogForm, title: e.target.value})}
+                        placeholder="Misal: Pendidikan Cirebonan dan Karakter Maritim..."
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Nama Penulis (Guru)</label>
+                      <input 
+                        type="text" 
+                        value={blogForm.author} 
+                        onChange={e => setBlogForm({...blogForm, author: e.target.value})}
+                        placeholder="Contoh: Drs. Suwito, M.Pd"
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Tanggal Rilis</label>
+                      <input 
+                        type="text" 
+                        value={blogForm.date} 
+                        onChange={e => setBlogForm({...blogForm, date: e.target.value})}
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* 4. FACILITIES FORM */}
+                {activeSubTab === 'facilities' && (
+                  <>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Nama Sarana / Fasilitas</label>
+                      <input 
+                        type="text" 
+                        value={facilityForm.name} 
+                        onChange={e => setFacilityForm({...facilityForm, name: e.target.value})}
+                        placeholder="Contoh: Perpustakaan Digital Cerdas"
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Gambar Ilustrasi Fasilitas URL</label>
+                      <input 
+                        type="text" 
+                        value={facilityForm.imageUrl} 
+                        onChange={e => setFacilityForm({...facilityForm, imageUrl: e.target.value})}
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="md:col-span-2 flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Ulasan Singkat Deskripsi</label>
+                      <textarea 
+                        rows={3}
+                        value={facilityForm.description} 
+                        onChange={e => setFacilityForm({...facilityForm, description: e.target.value})}
+                        placeholder="Gambarkan fungsi fasilitas ke siswa..."
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* 5. TEACHERS FORM */}
+                {activeSubTab === 'teachers' && (
+                  <>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Nama Lengkap Guru / Staf</label>
+                      <input 
+                        type="text" 
+                        value={teacherForm.name} 
+                        onChange={e => setTeacherForm({...teacherForm, name: e.target.value})}
+                        placeholder="Contoh: Drs. Setiadi, M.Pd"
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Mata Pelajaran Utama</label>
+                      <input 
+                        type="text" 
+                        value={teacherForm.subject} 
+                        onChange={e => setTeacherForm({...teacherForm, subject: e.target.value})}
+                        placeholder="Contoh: Sejarah Indonesia, Biologi"
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Jabatan Akademik / Wali Kelas</label>
+                      <input 
+                        type="text" 
+                        value={teacherForm.role} 
+                        onChange={e => setTeacherForm({...teacherForm, role: e.target.value})}
+                        placeholder="Contoh: Wali Kelas 11B • Guru Sosiologi"
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Foto Formal URL</label>
+                      <input 
+                        type="text" 
+                        value={teacherForm.imageUrl} 
+                        onChange={e => setTeacherForm({...teacherForm, imageUrl: e.target.value})}
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* 6. ACTIVITIES FORM */}
+                {activeSubTab === 'activities' && (
+                  <>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Nama Kegiatan / Klub Eskul</label>
+                      <input 
+                        type="text" 
+                        value={activityForm.title} 
+                        onChange={e => setActivityForm({...activityForm, title: e.target.value})}
+                        placeholder="Contoh: Pramuka Penegak Bantara"
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Jadwal Aktif</label>
+                      <input 
+                        type="text" 
+                        value={activityForm.date} 
+                        onChange={e => setActivityForm({...activityForm, date: e.target.value})}
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Kategori</label>
+                      <input 
+                        type="text" 
+                        value={activityForm.category} 
+                        onChange={e => setActivityForm({...activityForm, category: e.target.value})}
+                        placeholder="Olahraga, Seni, Akademik..."
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">URL Foto Ekskul</label>
+                      <input 
+                        type="text" 
+                        value={activityForm.imageUrl} 
+                        onChange={e => setActivityForm({...activityForm, imageUrl: e.target.value})}
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* 7. GALLERY FORM */}
+                {activeSubTab === 'gallery' && (
+                  <>
+                    <div className="md:col-span-2 flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Keterangan Foto</label>
+                      <input 
+                        type="text" 
+                        value={galleryForm.title} 
+                        onChange={e => setGalleryForm({...galleryForm, title: e.target.value})}
+                        placeholder="Deskripsikan momen yang tertangkap di foto..."
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Kategori Galeri</label>
+                      <select 
+                        value={galleryForm.tag}
+                        onChange={e => setGalleryForm({...galleryForm, tag: e.target.value as any})}
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      >
+                        <option value="akademik">Kegiatan Akademik (akademik)</option>
+                        <option value="eskul">Ekstrakurikuler (eskul)</option>
+                        <option value="fasilitas">Lingkungan & Fasilitas (fasilitas)</option>
+                      </select>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">URL Gambar</label>
+                      <input 
+                        type="text" 
+                        value={galleryForm.img} 
+                        onChange={e => setGalleryForm({...galleryForm, img: e.target.value})}
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      />
+                    </div>
+                  </>
+                )}
+
+              </div>
+
+              {/* ACTION CONTROL BUTTON FLOWS */}
+              <div className="flex items-center gap-2 pt-2 border-t border-slate-250">
+                <button
+                  type="button"
+                  onClick={() => isAdding ? handleCreate(activeSubTab) : saveEdit(activeSubTab)}
+                  className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg transition-all cursor-pointer"
+                >
+                  <Check className="w-4 h-4" />
+                  Simpan Perubahan
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingId(null);
+                    setIsAdding(false);
+                  }}
+                  className="flex items-center gap-1.5 bg-slate-200 hover:bg-slate-300 text-slate-755 font-bold text-xs px-4 py-2.5 rounded-lg transition-all cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                  Batalkan
+                </button>
+              </div>
+
+            </div>
+          )}
+
+          {/* RENDERING CURRENT DATA LIST FOR EACH ACTIVE SECTION */}
+          {!isAdding && !editingId && (
+            <div className="space-y-3" id="cms-item-records-holder">
+              
+              {/* If section is empty */}
+              {data[activeSubTab].length === 0 && (
+                <div className="text-center p-12 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-xs">
+                  Tidak ada data untuk modul ini. Silakan klik "Tambah Baru" untuk mengisinya kembali.
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 gap-3 max-h-[600px] overflow-y-auto pr-1">
+                {data[activeSubTab].map((item: any) => (
+                  <div 
+                    key={item.id} 
+                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between border border-slate-150 p-4 rounded-xl hover:bg-slate-50 transition-colors gap-4 bg-white"
+                  >
+                    
+                    {/* Visual representative for record */}
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                      {(item.imageUrl || item.img) && (
+                        <img 
+                          src={item.imageUrl || item.img} 
+                          alt="" 
+                          className="w-12 h-12 rounded-lg object-cover bg-slate-100 shrink-0 border border-slate-100"
+                        />
+                      )}
+                      
+                      <div className="space-y-1">
+                        <h4 className="font-bold text-slate-800 text-xs sm:text-sm line-clamp-1">{item.title || item.name}</h4>
+                        
+                        {/* Subtexts depending on models */}
+                        <div className="flex items-center gap-3 text-[10px] text-slate-450 font-semibold font-mono uppercase">
+                          {item.date && (
+                            <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-slate-400" /> {item.date}</span>
+                          )}
+                          {item.role && (
+                            <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">{item.role}</span>
+                          )}
+                          {item.subject && (
+                            <span className="text-indigo-600">Maple: {item.subject}</span>
+                          )}
+                          {item.category && (
+                            <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">{item.category}</span>
+                          )}
+                          {item.type && (
+                            <span className={`px-2 py-0.5 rounded-full ${
+                              item.type === 'Penting' ? 'bg-red-100 text-red-800' :
+                              item.type === 'Ujian' ? 'bg-amber-100 text-amber-800' :
+                              item.type === 'Layanan' ? 'bg-blue-100 text-blue-800' :
+                              'bg-slate-100 text-slate-800'
+                            }`}>{item.type}</span>
+                          )}
+                          {item.author && (
+                            <span className="text-indigo-600">Oleh: {item.author}</span>
+                          )}
+                          {item.tag && (
+                            <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded">{item.tag}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Controls */}
+                    <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                      <button
+                        onClick={() => startEdit(item.id, activeSubTab)}
+                        className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all border border-slate-100 hover:border-indigo-100"
+                        title="Edit data item"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(activeSubTab, item.id)}
+                        className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all border border-slate-100 hover:border-red-100"
+                        title="Hapus data item"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                  </div>
+                ))}
+              </div>
+
+            </div>
+          )}
+
+        </div>
+
+      </div>
+
+    </div>
+  );
+}

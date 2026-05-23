@@ -25,10 +25,11 @@ import NavigationGuide from './components/NavigationGuide';
 import LandingPageStructure from './components/LandingPageStructure';
 import LiveWebsiteDemo from './components/LiveWebsiteDemo';
 import Sman1LosariLogo from './components/Sman1LosariLogo';
+import CmsDashboard from './components/CmsDashboard';
 
 export default function App() {
   const [viewMode, setViewMode] = useState<'website' | 'workspace'>('website');
-  const [activeTab, setActiveTab] = useState<'welcome' | 'live-demo' | 'color' | 'nav' | 'structure'>('welcome');
+  const [activeTab, setActiveTab] = useState<'welcome' | 'live-demo' | 'color' | 'nav' | 'structure' | 'cms'>('welcome');
   const [selectedThemeId, setSelectedThemeId] = useState<string>('classic-scholar');
 
   // Quick stats computed for the redesign overview card
@@ -123,6 +124,7 @@ export default function App() {
             {[
               { id: 'welcome', label: '👋 Ringkasan Strategis', icon: Sparkles },
               { id: 'live-demo', label: '🖥️ Live Demo Website (Redesigned)', icon: Layout },
+              { id: 'cms', label: '⚙️ Kelola Data (Database Sim)', icon: Zap },
               { id: 'color', label: '🎨 Panduan Warna Baru', icon: Palette },
               { id: 'nav', label: '🧭 Rancangan Navigasi', icon: Compass },
               { id: 'structure', label: '📐 Aturan & Struktur Section', icon: BookOpen }
@@ -298,6 +300,19 @@ export default function App() {
             >
               {/* Renders section content wireframe mapping and component required checklists */}
               <LandingPageStructure />
+            </motion.div>
+          )}
+
+          {activeTab === 'cms' && (
+            <motion.div
+              key="cms-tab"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.25 }}
+            >
+              {/* Renders data management & local database controls */}
+              <CmsDashboard />
             </motion.div>
           )}
         </AnimatePresence>
