@@ -427,14 +427,16 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
       </section>
 
       {/* 4. RUNNING NEWS TICKER */}
-      <div className="py-3 border-y text-xs px-4 flex items-center gap-4 overflow-hidden relative z-10 font-medium" style={{ backgroundColor: `${c.accentHex}12`, borderColor: `${c.accentHex}20` }}>
-        <span className="shrink-0 flex items-center gap-1 font-bold uppercase tracking-widest" style={{ color: c.primaryHex }}>
-          <Bell className="w-3.5 h-3.5 animate-bounce" style={{ color: c.accentHex }} /> Info Kilat:
+      <div className="py-3 border-y text-xs px-4 flex items-center gap-3 overflow-hidden relative z-10 font-medium" style={{ backgroundColor: `${c.accentHex}12`, borderColor: `${c.accentHex}20` }}>
+        <span className="shrink-0 flex items-center gap-1.5 font-extrabold uppercase tracking-wider text-[10px] sm:text-xs text-white px-2.5 py-1 rounded-md shadow-xs select-none z-20" style={{ backgroundColor: c.primaryHex }}>
+          <Bell className="w-3.5 h-3.5 animate-bounce" style={{ color: c.accentHex }} /> Info Kilat
         </span>
-        <div className="animate-marquee whitespace-nowrap flex gap-12" style={{ color: c.primaryHex }}>
-          <span>🔊 Pendaftaran Siswa baru jalur Zonasi SPMB dibuka tanggal 01 - 10 Juni 2026. Siapkan berkas administratif Anda</span>
-          <span>📅 Raport Semester Genap akan dibagikan serentak tanggal 20 Juni 2026</span>
-          <span>🏆 SMAN 1 Losari menyabet Juara I Lomba Teater Remaja se-Kabupaten Cirebon! Berjaya SMANSALOS!</span>
+        <div className="overflow-hidden flex-1 relative flex items-center py-0.5">
+          <div className="animate-marquee whitespace-nowrap flex gap-12" style={{ color: c.primaryHex }}>
+            <span>🔊 Pendaftaran Siswa baru jalur Zonasi SPMB dibuka tanggal 01 - 10 Juni 2026. Siapkan berkas administratif Anda</span>
+            <span>📅 Raport Semester Genap akan dibagikan serentak tanggal 20 Juni 2026</span>
+            <span>🏆 SMAN 1 Losari menyabet Juara I Lomba Teater Remaja se-Kabupaten Cirebon! Berjaya SMANSALOS!</span>
+          </div>
         </div>
       </div>
 
