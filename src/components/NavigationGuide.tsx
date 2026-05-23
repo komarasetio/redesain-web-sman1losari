@@ -49,7 +49,7 @@ export default function NavigationGuide() {
       id: 'layanan',
       hasDropdown: true,
       items: [
-        { label: 'PPDB Online 2026', desc: 'Sistem pendaftaran peserta didik baru.' },
+        { label: 'SPMB Online 2026', desc: 'Sistem pendaftaran peserta didik baru.' },
         { label: 'Perpustakaan E-Library', desc: 'Kumpulan katalog buku pembelajaran digital.' },
         { label: 'Layanan Konseling (BK)', desc: 'Konsultasi bimbingan perkembangan psikologis siswa.' },
         { label: 'Agenda Akademik', desc: 'Kalender acara sekolah sepanjang semester.' }
@@ -129,7 +129,7 @@ export default function NavigationGuide() {
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="flex items-center gap-1 text-[11px] font-medium"><Clock className="w-3.5 h-3.5 text-amber-500" /> Waktu Lokal: 17:28 WIB</span>
-                  <span className="hidden bg-amber-500/10 text-amber-700 px-2 py-0.5 rounded-full font-bold text-[10px]">PPDB 2026/2027</span>
+                  <span className="hidden bg-amber-500/10 text-amber-700 px-2 py-0.5 rounded-full font-bold text-[10px]">SPMB 2026/2027</span>
                 </div>
               </div>
 
@@ -206,7 +206,7 @@ export default function NavigationGuide() {
                   </div>
                   
                   <button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-xs px-4 py-2 rounded-lg shadow-xs hover:shadow-xs transition-all pointer-events-none">
-                    PPDB 2026/2027
+                    SPMB 2026/2027
                   </button>
                 </div>
               </div>
@@ -261,8 +261,8 @@ export default function NavigationGuide() {
               <div className="p-3 bg-blue-50/50 rounded-lg text-blue-900 flex items-start gap-2">
                 <span className="bg-blue-100 px-1.5 py-0.5 rounded font-bold text-[10px] mt-0.5">2</span>
                 <div>
-                  <h5 className="font-semibold text-[11px]">Fokus Tombol PPDB (Admission Call-To-Action)</h5>
-                  <p className="text-[10px] text-slate-500">Tombol pendaftaran PPDB ditempatkan sebagai pilar utama navigasi dengan warna mencolok agar menarik perhatian calon siswa dengan instan.</p>
+                  <h5 className="font-semibold text-[11px]">Fokus Tombol SPMB (Admission Call-To-Action)</h5>
+                  <p className="text-[10px] text-slate-500">Tombol pendaftaran SPMB ditempatkan sebagai pilar utama navigasi dengan warna mencolok agar menarik perhatian calon siswa dengan instan.</p>
                 </div>
               </div>
             </div>

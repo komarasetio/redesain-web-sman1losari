@@ -24,6 +24,7 @@ import ColorGuide from './components/ColorGuide';
 import NavigationGuide from './components/NavigationGuide';
 import LandingPageStructure from './components/LandingPageStructure';
 import LiveWebsiteDemo from './components/LiveWebsiteDemo';
+import Sman1LosariLogo from './components/Sman1LosariLogo';
 
 export default function App() {
   const [viewMode, setViewMode] = useState<'website' | 'workspace'>('website');
@@ -35,7 +36,7 @@ export default function App() {
     { title: 'Bento Grid News', desc: 'Sistem peletakan asimetris yang membagi fokus berita utama (seperti visi misi) secara kokoh dan kontemporer.' },
     { title: 'Interactive Resource Tabs', desc: 'Menghilangkan kekakuan grid horizontal lama yang melelahkan diganti dengan drawer penjelajahan responsif.' },
     { title: 'Heritage Branding', desc: 'Mempertahankan keterkaitan emosional warna marigold tradisi Cirebon dengan sentuhan Biru Slate Akademik.' },
-    { title: 'Fluid Navigation Hub', desc: 'Backdrop glassmorphic navigation bar yang mengambang anggun, memudahkan pencarian PPDB seketika.' }
+    { title: 'Fluid Navigation Hub', desc: 'Backdrop glassmorphic navigation bar yang mengambang anggun, memudahkan pencarian SPMB seketika.' }
   ];
 
   if (viewMode === 'website') {
@@ -89,17 +90,13 @@ export default function App() {
           {/* Logo & Sub styling aligned to design school structure */}
           <div className="space-y-1">
             <div className="flex items-center gap-3">
-              <span className="w-10 h-10 bg-slate-900 text-white rounded-lg flex items-center justify-center shadow-lg font-black shrink-0 relative hover:rotate-6 transition-transform">
-                <div className="w-6 h-6 border border-amber-400 rotate-45 flex items-center justify-center">
-                  <span className="text-[9px] -rotate-45 font-semibold text-white">S1L</span>
-                </div>
-              </span>
+              <Sman1LosariLogo size="md" primaryColor="#1E293B" accentColor="#F59E0B" />
               <div>
-                <h1 className="text-lg font-black tracking-tight text-slate-900 uppercase">
+                <h1 className="text-sm sm:text-base md:text-lg font-black tracking-tight text-slate-900 uppercase leading-none">
                   PROYEK MEROMBAK PORTAL KAMPUS SMAN 1 LOSARI
                 </h1>
-                <p className="text-[10px] text-slate-500 font-extrabold tracking-widest uppercase">
-                  Cerdas • Beradab • Inovatif
+                <p className="font-script text-[15px] sm:text-[17px] italic text-amber-600 font-extrabold tracking-wide mt-1.5 leading-none">
+                  Pasti Bisa!
                 </p>
               </div>
             </div>

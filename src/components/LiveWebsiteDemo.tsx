@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { NewsItem, TeacherItem, FacilityItem, ActivityItem, AgendaItem } from '../types';
+import Sman1LosariLogo from './Sman1LosariLogo';
 
 interface LiveWebsiteDemoProps {
   themeId: string;
@@ -115,7 +116,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
     },
     {
       id: 'news-2',
-      title: 'Tinjau Kesiapan PPDB, Plh. Kepala Dinas Pendidikan Provinsi Kunjungi SMAN 1 Losari',
+      title: 'Tinjau Kesiapan SPMB, Plh. Kepala Dinas Pendidikan Provinsi Kunjungi SMAN 1 Losari',
       date: 'Rabu, 29 Mei 2026',
       category: 'Pengumuman',
       excerpt: 'Kunjungan formal guna meninjau kelengkapan server dan panitia ad-hoc demi menjamin keadilan pendaftaran siswa baru wilayah perbatasan Cirebon.',
@@ -200,16 +201,16 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
     <div className={`bg-slate-50 overflow-x-hidden relative ${isFullPage ? '' : 'rounded-2xl border border-slate-200 shadow-sm'}`} id="live-demo-parent">
       
       {/* 1. INFORMATIONAL TOP-BAR */}
-      <div className="text-slate-200 py-2.5 px-4 md:px-8 flex flex-col md:flex-row md:items-center justify-between gap-2 text-xs relative z-45 border-b" style={{ backgroundColor: c.primaryHex, borderColor: `${c.accentHex}15` }} id="live-demo-top-bar">
-        <div className="flex flex-wrap items-center gap-4">
-          <span className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full animate-pulse shrink-0" style={{ backgroundColor: c.accentHex }}></span>
-            Pendaftaran Siswa Baru (PPDB) SMAN 1 Losari TA 2026/2027 Telah Resmi Dibuka
+      <div className="text-slate-200 py-2.5 px-4 md:px-8 flex flex-col md:flex-row md:items-center justify-between gap-2 text-[10px] md:text-xs relative z-45 border-b" style={{ backgroundColor: c.primaryHex, borderColor: `${c.accentHex}15` }} id="live-demo-top-bar">
+        <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-center md:text-left">
+          <span className="flex items-center gap-2 justify-center">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+            <span className="font-semibold tracking-wide text-white">SPMB SMAN 1 Losari TA 2026/2027 Telah Resmi Dibuka!</span>
           </span>
           <span className="hidden md:inline text-slate-500 opacity-40">|</span>
           <span className="hidden md:flex items-center gap-1"><Phone className="w-3.5 h-3.5" style={{ color: c.accentHex }} /> Tlp: (0231) 831999</span>
         </div>
-        <div className="flex items-center justify-between md:justify-end gap-6 pt-2 md:pt-0 border-t md:border-t-0" style={{ borderColor: `${c.accentHex}15` }}>
+        <div className="hidden sm:flex items-center justify-between md:justify-end gap-6 pt-2 md:pt-0 border-t md:border-t-0" style={{ borderColor: `${c.accentHex}15` }}>
           <span className="flex items-center gap-1.5 font-medium"><Clock className="w-3.5 h-3.5" style={{ color: c.accentHex }} /> Sab, 23 Mei 2026 | 17:28 WIB</span>
           <div className="flex gap-4 font-bold text-slate-300">
             <a href="#resources" className="hover:text-white transition-colors">Alumni</a>
@@ -219,17 +220,13 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
         </div>
       </div>
           {/* 2. HEADER GLASSMORPHIC NAVIGATION BAR */}
-      <header className="sticky top-0 bg-white px-4 md:px-8 py-5 flex justify-between items-center shadow-md z-30 transition-all border-b border-slate-100">
+      <header className="sticky top-0 bg-white px-3 sm:px-6 md:px-8 py-4 sm:py-5 flex justify-between items-center shadow-md z-30 transition-all border-b border-slate-100" id="live-demo-header">
         {/* Brand section (Rotated square emblem as requested by design HTML) */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 flex items-center justify-center rounded-lg shadow-md hover:rotate-12 transition-transform duration-300 cursor-pointer" style={{ backgroundColor: c.primaryHex }}>
-            <div className="w-6 h-6 border-2 rotate-45 flex items-center justify-center" style={{ borderColor: c.accentHex }}>
-              <span className="text-[9px] font-black -rotate-45 text-white font-mono">L</span>
-            </div>
-          </div>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Sman1LosariLogo size="sm" primaryColor={c.primaryHex} accentColor={c.accentHex} />
           <div>
-            <h1 className="text-sm md:text-base font-black leading-tight uppercase tracking-tight" style={{ color: c.primaryHex }}>SMA NEGERI 1 LOSARI</h1>
-            <p className="text-[9px] text-slate-500 tracking-widest uppercase font-extrabold">Cerdas • Beradab • Inovatif</p>
+            <h1 className="text-xs sm:text-sm md:text-base font-black leading-none uppercase tracking-tight" style={{ color: c.primaryHex }}>SMAN 1 LOSARI</h1>
+            <p className="font-script text-sm sm:text-base italic font-bold tracking-wide -mt-0.5 leading-none" style={{ color: c.accentHex }}>Pasti Bisa!</p>
           </div>
         </div>
 
@@ -264,7 +261,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
         </nav>
 
         {/* Action Center - Search & Button */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           <div className="relative hidden xl:block">
             <input 
               type="text" 
@@ -279,18 +276,18 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
             href="https://spmb.jabarprov.go.id/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-white px-6 py-2 rounded-full text-xs font-extrabold shadow-lg tracking-wider uppercase cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center"
+            className="text-white px-3 sm:px-6 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-xs font-extrabold shadow-lg tracking-wider uppercase cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center whitespace-nowrap"
             style={{ backgroundColor: c.primaryHex }}
           >
-            PORTAL PPDB
+            PORTAL SPMB
           </a>
 
           {/* Hamburger Menu (Mobile Layout) */}
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 bg-slate-50 rounded-lg lg:hidden"
+            className="p-1 sm:p-2 bg-slate-50 rounded-lg lg:hidden"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5" /> : <Menu className="w-4 h-4 sm:w-5 sm:h-5" />}
           </button>
         </div>
       </header>
@@ -312,6 +309,17 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
               <a href="#galeri" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-800 block">Galeri Aktivitas</a>
               <a href="#guru" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-800 block">Direktori Guru</a>
             </div>
+
+            {/* Quick links for mobile screen layout efficiency */}
+            <div className="border-t border-slate-100 pt-3">
+              <p className="px-3 text-[9px] font-black tracking-widest text-slate-400 uppercase mb-2">Tautan Akademik</p>
+              <div className="grid grid-cols-3 gap-2 px-1">
+                <a href="#resources" onClick={() => setMobileMenuOpen(false)} className="py-2 text-center bg-slate-50 hover:bg-slate-100 rounded-lg text-[10px] font-extrabold text-slate-700 block border border-slate-100">Alumni</a>
+                <a href="#resources" onClick={() => setMobileMenuOpen(false)} className="py-2 text-center bg-slate-50 hover:bg-slate-100 rounded-lg text-[10px] font-extrabold text-slate-700 block border border-slate-100">Pusat Buku</a>
+                <a href="#resources" onClick={() => setMobileMenuOpen(false)} className="py-2 text-center bg-slate-50 hover:bg-slate-100 rounded-lg text-[10px] font-extrabold text-slate-700 block border border-slate-100">E-Learning</a>
+              </div>
+            </div>
+
             <div className="relative pt-2">
               <input 
                 type="text" 
@@ -361,7 +369,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                 className="text-slate-950 px-8 py-3 rounded-md font-bold text-xs hover:brightness-110 transition-all shadow-xl font-extrabold uppercase tracking-wider cursor-pointer inline-flex items-center justify-center"
                 style={{ backgroundColor: c.accentHex }}
               >
-                Daftar PPDB Sekarang
+                Daftar SPMB Sekarang
               </a>
               <button 
                 onClick={() => {
@@ -424,7 +432,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
           <Bell className="w-3.5 h-3.5 animate-bounce" style={{ color: c.accentHex }} /> Info Kilat:
         </span>
         <div className="animate-marquee whitespace-nowrap flex gap-12" style={{ color: c.primaryHex }}>
-          <span>🔊 Pendaftaran Siswa baru jalur Zonasi PPDB dibuka tanggal 01 - 10 Juni 2026. Siapkan berkas administratif Anda</span>
+          <span>🔊 Pendaftaran Siswa baru jalur Zonasi SPMB dibuka tanggal 01 - 10 Juni 2026. Siapkan berkas administratif Anda</span>
           <span>📅 Raport Semester Genap akan dibagikan serentak tanggal 20 Juni 2026</span>
           <span>🏆 SMAN 1 Losari menyabet Juara I Lomba Teater Remaja se-Kabupaten Cirebon! Berjaya SMANSALOS!</span>
         </div>
@@ -743,7 +751,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
 
             <div className="bg-slate-900 p-3 rounded-lg flex items-start gap-1.5 text-[10px] text-slate-400">
               <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0 mt-1" />
-              <span>Kotak oranye menandai terselenggaranya rapat, kurikulum, & rilis PPDB tahun ini.</span>
+              <span>Kotak oranye menandai terselenggaranya rapat, kurikulum, & rilis SPMB tahun ini.</span>
             </div>
           </div>
 
@@ -757,7 +765,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
 
             <div className="space-y-4">
               {[
-                { date: '29 Mei 2026', title: 'Sosialisasi Alur Pendaftaran PPDB Online 2026', time: '09:00 - 12:00', loc: 'Aula Serbaguna SMANSALOS' },
+                { date: '29 Mei 2026', title: 'Sosialisasi Alur Pendaftaran SPMB Online 2026', time: '09:00 - 12:00', loc: 'Aula Serbaguna SMANSALOS' },
                 { date: '15 Juni 2026', title: 'Rapat Pleno Komite & Istighosah Kelulusan Kelas XII', time: '13:00 - Selesai', loc: 'Masjid At-Taqwa Kampus' }
               ].map((ag, idx) => (
                 <div 
@@ -1005,11 +1013,12 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
           
           {/* Logo brand */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-black">
-                SL
+            <div className="flex items-center gap-2.5">
+              <Sman1LosariLogo size="sm" primaryColor="#0F172A" accentColor="#F59E0B" />
+              <div>
+                <h5 className="font-extrabold text-white text-sm leading-none">SMAN 1 LOSARI</h5>
+                <p className="font-script text-[13px] text-amber-500 font-bold leading-none mt-1">Pasti Bisa!</p>
               </div>
-              <h5 className="font-extrabold text-white text-sm">SMAN 1 LOSARI</h5>
             </div>
             <p className="text-slate-500 leading-relaxed text-[11px]">
               SMA Negeri 1 Losari merupakan bagian dari akselerasi kecakapan literasi digital and prestasi akademik di Kabupaten Cirebon, Jawa Barat.
@@ -1023,7 +1032,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
           <div className="space-y-4">
             <h5 className="font-extrabold text-white text-xs tracking-wider uppercase">Tautan Direktori</h5>
             <ul className="space-y-2 text-[11px]">
-              <li><a href="#" className="hover:text-white transition-colors">PPDB Online SMANSALOS</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">SPMB Online SMANSALOS</a></li>
               <li><a href="#" className="hover:text-white transition-colors">E-Smart Library Portal</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Kalender Pendidikan Semester Ganjil</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Berita Kurikulum Mandiri</a></li>
