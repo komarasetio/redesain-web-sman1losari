@@ -37,9 +37,10 @@ import { NewsItem, TeacherItem, FacilityItem, ActivityItem, AgendaItem } from '.
 
 interface LiveWebsiteDemoProps {
   themeId: string;
+  isFullPage?: boolean;
 }
 
-export default function LiveWebsiteDemo({ themeId }: LiveWebsiteDemoProps) {
+export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWebsiteDemoProps) {
   const [activeTab, setActiveTab] = useState<'berita' | 'pengumuman' | 'blog' | 'fasilitas'>('berita');
   const [galleryFilter, setGalleryFilter] = useState<'semua' | 'akademik' | 'eskul' | 'fasilitas'>('semua');
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
@@ -196,7 +197,7 @@ export default function LiveWebsiteDemo({ themeId }: LiveWebsiteDemoProps) {
     : galleryItems.filter(item => item.tag === galleryFilter);
 
   return (
-    <div className="bg-slate-50 overflow-x-hidden rounded-2xl border border-slate-200 shadow-sm relative" id="live-demo-parent">
+    <div className={`bg-slate-50 overflow-x-hidden relative ${isFullPage ? '' : 'rounded-2xl border border-slate-200 shadow-sm'}`} id="live-demo-parent">
       
       {/* 1. INFORMATIONAL TOP-BAR */}
       <div className="text-slate-200 py-2.5 px-4 md:px-8 flex flex-col md:flex-row md:items-center justify-between gap-2 text-xs relative z-45 border-b" style={{ backgroundColor: c.primaryHex, borderColor: `${c.accentHex}15` }} id="live-demo-top-bar">

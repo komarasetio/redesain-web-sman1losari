@@ -26,6 +26,7 @@ import LandingPageStructure from './components/LandingPageStructure';
 import LiveWebsiteDemo from './components/LiveWebsiteDemo';
 
 export default function App() {
+  const [viewMode, setViewMode] = useState<'website' | 'workspace'>('website');
   const [activeTab, setActiveTab] = useState<'welcome' | 'live-demo' | 'color' | 'nav' | 'structure'>('welcome');
   const [selectedThemeId, setSelectedThemeId] = useState<string>('classic-scholar');
 
@@ -36,6 +37,29 @@ export default function App() {
     { title: 'Heritage Branding', desc: 'Mempertahankan keterkaitan emosional warna marigold tradisi Cirebon dengan sentuhan Biru Slate Akademik.' },
     { title: 'Fluid Navigation Hub', desc: 'Backdrop glassmorphic navigation bar yang mengambang anggun, memudahkan pencarian PPDB seketika.' }
   ];
+
+  if (viewMode === 'website') {
+    return (
+      <div className="min-h-screen bg-slate-50 text-slate-900 font-sans relative" id="portal-redesign-root">
+        {/* Full-width clean redesigned website */}
+        <LiveWebsiteDemo themeId={selectedThemeId} isFullPage={true} />
+
+        {/* Floating Developer/Workspace Toggle Button */}
+        <button
+          onClick={() => {
+            setViewMode('workspace');
+            setActiveTab('live-demo');
+          }}
+          className="fixed bottom-6 right-6 z-50 bg-slate-900/90 backdrop-blur-md hover:bg-slate-900 text-white px-4 py-2.5 rounded-full text-[10px] font-black tracking-wider uppercase shadow-2xl border border-white/10 hover:border-white/20 flex items-center gap-2 transition-all hover:scale-105 active:scale-95 group cursor-pointer"
+          title="Buka Panel Evaluasi Redesain / Cari Tahu Perubahannya"
+          id="toggle-workspace-button"
+        >
+          <span className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse shrink-0"></span>
+          <span>Buka Panel Kontrol / Desain Hub</span>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50/50 text-slate-900 font-sans" id="portal-redesign-root">
@@ -81,10 +105,18 @@ export default function App() {
             </div>
           </div>
 
-          {/* Quick theme status tracker */}
-          <div className="hidden xl:flex items-center gap-2 text-xs bg-slate-100 p-2.5 rounded-xl border border-slate-200 text-slate-650">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" />
-            <span>Skema Aktif: <strong className="font-extrabold text-slate-900 capitalize">{selectedThemeId.replace('-', ' ')}</strong></span>
+          {/* Quick theme status tracker + Public Website Quick Switch */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setViewMode('website')}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl shadow-lg transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95 text-center uppercase tracking-wider"
+            >
+              <CheckCircle className="w-4 h-4 shrink-0" /> Lihat Situs Utama
+            </button>
+            <div className="hidden xl:flex items-center gap-2 text-xs bg-slate-100 p-2.5 rounded-xl border border-slate-200 text-slate-650">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" />
+              <span>Skema Aktif: <strong className="font-extrabold text-slate-900 capitalize">{selectedThemeId.replace('-', ' ')}</strong></span>
+            </div>
           </div>
         </div>
 
