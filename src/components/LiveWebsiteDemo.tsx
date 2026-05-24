@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Phone, 
   Mail, 
@@ -374,6 +374,69 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
   });
   const [showLangDropdown, setShowLangDropdown] = useState(false);
 
+  const [timeStr, setTimeStr] = useState<string>(() => {
+    return lang === 'id' ? 'Sab, 23 Mei 2026 | 17:28:00 WIB' : 'Sat, May 23, 2026 | 17:28:00 WIB';
+  });
+
+  useEffect(() => {
+    const updateTime = () => {
+      try {
+        const now = new Date();
+        const formatter = new Intl.DateTimeFormat('en-US', {
+          timeZone: 'Asia/Jakarta',
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+          hour12: false
+        });
+        const parts = formatter.formatToParts(now);
+        const partMap: Record<string, string> = {};
+        parts.forEach(p => {
+          partMap[p.type] = p.value;
+        });
+
+        const weekdayFormatter = new Intl.DateTimeFormat(lang === 'id' ? 'id-ID' : 'en-US', {
+          timeZone: 'Asia/Jakarta',
+          weekday: 'short'
+        });
+        const weekdayStr = weekdayFormatter.format(now).replace(/\./g, '');
+
+        const monthsId = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        const monthsEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        const mIdx = parseInt(partMap['month'], 10) - 1;
+        const monthStr = lang === 'id' ? monthsId[mIdx] : monthsEn[mIdx];
+        
+        const day = partMap['day'];
+        const year = partMap['year'];
+        const hour = partMap['hour'].padStart(2, '0');
+        const minute = partMap['minute'].padStart(2, '0');
+        const second = partMap['second'].padStart(2, '0');
+
+        let formatted = '';
+        if (lang === 'id') {
+          formatted = `${weekdayStr}, ${day} ${monthStr} ${year} | ${hour}:${minute}:${second} WIB`;
+        } else {
+          formatted = `${weekdayStr}, ${monthStr} ${day}, ${year} | ${hour}:${minute}:${second} WIB`;
+        }
+        setTimeStr(formatted);
+      } catch (e) {
+        const now = new Date();
+        const fallbackHours = String(now.getHours()).padStart(2, '0');
+        const fallbackMinutes = String(now.getMinutes()).padStart(2, '0');
+        const fallbackSeconds = String(now.getSeconds()).padStart(2, '0');
+        setTimeStr(`${now.toDateString()} | ${fallbackHours}:${fallbackMinutes}:${fallbackSeconds}`);
+      }
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, [lang]);
+
   // Core helper translation function that parses translations and dynamic database strings
   const t = (key: string): string => {
     const currentTranslations = translations[lang] || translations['id'];
@@ -497,7 +560,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
           <span className="hidden md:flex items-center gap-1"><Phone className="w-3.5 h-3.5" style={{ color: c.accentHex }} /> {t('phone')}: (0231) 831999</span>
         </div>
         <div className="hidden sm:flex items-center justify-between md:justify-end gap-6 pt-2 md:pt-0 border-t md:border-t-0" style={{ borderColor: `${c.accentHex}15` }}>
-          <span className="flex items-center gap-1.5 font-medium flex-nowrap"><Clock className="w-3.5 h-3.5" style={{ color: c.accentHex }} /> {lang === 'id' ? 'Sab, 23 Mei 2026' : 'Sat, May 23, 2026'} | 17:28 WIB</span>
+          <span className="flex items-center gap-1.5 font-medium flex-nowrap"><Clock className="w-3.5 h-3.5" style={{ color: c.accentHex }} /> {timeStr}</span>
           <div className="flex gap-4 font-bold text-slate-300">
             <a href="#resources" className="hover:text-white transition-colors">{t('alumni')}</a>
             <a href="#resources" className="hover:text-white transition-colors">{t('library')}</a>
