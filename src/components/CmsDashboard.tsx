@@ -27,10 +27,48 @@ import {
 } from 'lucide-react';
 import { useSchoolData } from '../lib/schoolDataStore';
 import { NewsItem, TeacherItem, FacilityItem, ActivityItem } from '../types';
+import Sman1LosariLogo from './Sman1LosariLogo';
 
 export default function CmsDashboard() {
   const { data, addItem, editItem, deleteItem, resetToDefault } = useSchoolData();
-  const [activeSubTab, setActiveSubTab] = useState<'news' | 'announcements' | 'blogs' | 'facilities' | 'teachers' | 'activities' | 'gallery'>('news');
+  const [activeSubTab, setActiveSubTab] = useState<'news' | 'announcements' | 'blogs' | 'facilities' | 'teachers' | 'activities' | 'gallery' | 'logo'>('news');
+  
+  const [customLogo, setCustomLogo] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('sman1losari_custom_logo');
+  });
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Maaf, file harus berupa gambar!');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      localStorage.setItem('sman1losari_custom_logo', base64);
+      setCustomLogo(base64);
+      window.dispatchEvent(new Event('sman1losari_logo_changed'));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleLogoUrlChange = (url: string) => {
+    if (!url.trim()) return;
+    localStorage.setItem('sman1losari_custom_logo', url);
+    setCustomLogo(url);
+    window.dispatchEvent(new Event('sman1losari_logo_changed'));
+  };
+
+  const handleLogoDelete = () => {
+    if (confirm('Apakah Anda yakin ingin menghapus logo kustom dan mengembalikan logo ke lambang bawaan resmi SMAN 1 Losari?')) {
+      localStorage.removeItem('sman1losari_custom_logo');
+      setCustomLogo(null);
+      window.dispatchEvent(new Event('sman1losari_logo_changed'));
+    }
+  };
   
   // Authentication states
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
@@ -208,6 +246,7 @@ export default function CmsDashboard() {
     { id: 'teachers', label: '👩‍🏫 Guru / Staff', icon: User, count: data.teachers.length },
     { id: 'activities', label: '⚽ Aktivitas / Eskul', icon: Activity, count: data.activities.length },
     { id: 'gallery', label: '🖼️ Galeri Foto', icon: Image, count: data.gallery.length },
+    { id: 'logo', label: '🛡️ Logo Sekolah', icon: ShieldCheck, count: customLogo ? 1 : 0 },
   ];
 
   const handleLogin = (e: React.FormEvent) => {
@@ -444,7 +483,7 @@ export default function CmsDashboard() {
               <span>Kelola Data {categories.find(c => c.id === activeSubTab)?.label.split(' ').slice(1).join(' ')}</span>
             </h3>
             
-            {!isAdding && !editingId && (
+            {!isAdding && !editingId && activeSubTab !== 'logo' && (
               <button
                 onClick={() => setIsAdding(true)}
                 className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs px-3.5 py-2 rounded-xl transition-all cursor-pointer shadow-sm hover:shadow-xs"
@@ -456,7 +495,7 @@ export default function CmsDashboard() {
           </div>
 
           {/* DYNAMIC FORMS FOR CREATING / ADDING DATA */}
-          {(isAdding || editingId) && (
+          {(isAdding || editingId) && activeSubTab !== 'logo' && (
             <div className="p-5 bg-slate-50 border border-slate-150 rounded-xl space-y-4">
               <h4 className="font-black text-slate-900 text-xs uppercase tracking-wider text-indigo-600">
                 {isAdding ? 'Formulir Tambah Data Baru' : 'Formulir Edit Data Item'}
@@ -785,7 +824,7 @@ export default function CmsDashboard() {
           )}
 
           {/* RENDERING CURRENT DATA LIST FOR EACH ACTIVE SECTION */}
-          {!isAdding && !editingId && (
+          {!isAdding && !editingId && activeSubTab !== 'logo' && (
             <div className="space-y-3" id="cms-item-records-holder">
               
               {/* If section is empty */}
@@ -869,6 +908,113 @@ export default function CmsDashboard() {
                 ))}
               </div>
 
+            </div>
+          )}
+
+          {activeSubTab === 'logo' && (
+            <div className="space-y-6" id="logo-manager-panel">
+              <div className="p-6 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col md:flex-row items-center gap-6 justify-between animate-fadeIn">
+                <div className="flex items-center gap-4">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white border border-slate-200 rounded-full flex items-center justify-center p-2 shadow-xs shrink-0">
+                    <Sman1LosariLogo size="xl" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-black text-slate-900 text-sm">Logo Aktif Saat Ini</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      {customLogo 
+                        ? 'Menggunakan logo kustom yang diunggah oleh administrator.' 
+                        : 'Menggunakan lambang vektor SVG bawaan resmi SMAN 1 Losari.'}
+                    </p>
+                    <span className={`inline-block text-[10px] font-bold px-2.5 py-0.5 rounded-full capitalize ${customLogo ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600'}`}>
+                      {customLogo ? 'Logo Kustom' : 'Logo Bawaan'}
+                    </span>
+                  </div>
+                </div>
+                {customLogo && (
+                  <button
+                    onClick={handleLogoDelete}
+                    className="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-650 font-extrabold text-xs px-4 py-2.5 rounded-xl transition-all border border-red-200 cursor-pointer text-center"
+                  >
+                    <Trash2 className="w-4 h-4" /> Hapus Logo Kustom
+                  </button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* Opsi 1: Upload File Gambar */}
+                <div className="border border-slate-200/80 p-5 rounded-2xl bg-white space-y-4 shadow-3xs">
+                  <div className="space-y-1">
+                    <h5 className="font-black text-slate-800 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                      <Camera className="w-4 h-4 text-indigo-600" />
+                      Opsi 1: Unggah Gambar Baru
+                    </h5>
+                    <p className="text-[11px] text-slate-500">
+                      Pilih file logo baru berformat PNG, JPEG, atau WebP dari komputer Anda.
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="relative flex flex-col items-center justify-center border-2 border-dashed border-slate-200 hover:border-indigo-400 bg-slate-50/50 hover:bg-slate-50 transition-colors p-6 rounded-xl cursor-pointer text-center group">
+                      <span className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <Plus className="w-5 h-5 text-indigo-600" />
+                      </span>
+                      <span className="text-xs font-bold text-slate-700 mt-2 block">Pilih File Logo</span>
+                      <span className="text-[10px] text-slate-400 block mt-1">Format persegi (misal: 500x500px)</span>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handleLogoUpload} 
+                        className="hidden" 
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                {/* Opsi 2: URL Link Gambar */}
+                <div className="border border-slate-200/80 p-5 rounded-2xl bg-white space-y-4 shadow-3xs">
+                  <div className="space-y-1">
+                    <h5 className="font-black text-slate-800 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                      <Image className="w-4 h-4 text-emerald-600" />
+                      Opsi 2: Pasang dari Tautan URL
+                    </h5>
+                    <p className="text-[11px] text-slate-500">
+                      Tentukan alamat URL absolut dari gambar eksternal yang ada di internet.
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex flex-col gap-1.5">
+                      <input 
+                        type="url" 
+                        id="logo-url-input"
+                        placeholder="Contoh: https://example.com/logo.png"
+                        className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none w-full"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const input = document.getElementById('logo-url-input') as HTMLInputElement;
+                        if (input && input.value.trim()) {
+                          handleLogoUrlChange(input.value.trim());
+                        } else {
+                          alert('Silakan masukkan url gambar yang valid!');
+                        }
+                      }}
+                      className="w-full flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg transition-all cursor-pointer"
+                    >
+                      <Check className="w-4 h-4" /> Pasang dari URL
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+              
+              <div className="p-4 bg-amber-50 rounded-xl border border-amber-100 flex gap-2 text-[11px] text-amber-800 leading-relaxed">
+                <span className="shrink-0 font-bold">💡 Catatan Sinkronisasi:</span>
+                <span>Perubahan logo di atas akan langsung diperbarui di seluruh bagian header website SMAN 1 Losari, panel dashboard admin, dan footer secara dinamis. Menghapus logo kustom akan memulihkan lambang vektor bawaan.</span>
+              </div>
             </div>
           )}
 

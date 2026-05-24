@@ -24,7 +24,8 @@ import {
   Eye,
   EyeOff,
   User,
-  X
+  X,
+  Download
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ColorGuide from './components/ColorGuide';
@@ -40,6 +41,7 @@ export default function App() {
   const [selectedThemeId, setSelectedThemeId] = useState<string>('classic-scholar');
 
   // Security Modal States
+  const [logoDownloadStatus, setLogoDownloadStatus] = useState<'idle' | 'success' | 'copied'>('idle');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -334,6 +336,106 @@ export default function App() {
                       Lihat Panduan Warna Baru
                     </button>
                   </div>
+                </div>
+              </div>
+              
+              {/* BRANDING HUB & SVG DOWNLOAD CENTER */}
+              <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                <div className="flex flex-col items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-100/80 md:col-span-1">
+                  <Sman1LosariLogo size="xl" className="w-32 h-32 md:w-40 md:h-40 relative z-10 hover:scale-110 hover:rotate-3 transition-transform duration-500" />
+                  <span className="text-[10px] font-mono text-slate-400 mt-4 tracking-wider font-semibold">500 x 500 PX • VECTOR SVG</span>
+                </div>
+                
+                <div className="md:col-span-2 space-y-4 text-left">
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-black tracking-widest text-amber-605 bg-amber-50 border border-amber-200/55 px-2.5 py-1 rounded uppercase font-semibold">REKOGNISI WARISAN & KULTUR</span>
+                    <h3 className="font-black text-xl text-slate-900">🛡️ Pusat Unduh Logo SVG Resmi SMAN 1 Losari</h3>
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Kami telah merencanakan dan merekonstruksi seluruh lambang sekolah SMA Negeri 1 Losari Kabupaten Cirebon dari format raster pecah yang lama menjadi <strong>vektor SVG murni berpresisi tinggi</strong>. Visual ikonik penting seperti <em>Candi Bentar Cirebon</em>, <em>Bawang Merah Losari</em>, <em>Sepasang Ikan Bandeng Pantai Cisanggarung</em>, serta <em>Buku & Bintang</em> telah digambar ulang secara presisi agar siap dipakai untuk kop surat, seragam, dan media cetak tanpa pecah sama sekali.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 text-[11px] text-slate-600 font-medium">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-emerald-500 text-xs">✓</span>
+                      <span>Format Vektor Murni (Scalable tanpa batas)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-emerald-500 text-xs">✓</span>
+                      <span>Kompatibel Adobe Illustrator & Figma</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-emerald-500 text-xs">✓</span>
+                      <span>Ukuran File Sangat Ringan (&lt;15 KB)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-emerald-500 text-xs">✓</span>
+                      <span>Dirender Responsif dengan warna tema</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-3 pt-2">
+                    <button
+                      onClick={() => {
+                        const svgElement = document.getElementById('sman-1-losari-logo-svg');
+                        if (svgElement) {
+                          const serializer = new XMLSerializer();
+                          let svgString = serializer.serializeToString(svgElement);
+                          if (!svgString.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {
+                            svgString = svgString.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+                          }
+                          const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                          const url = URL.createObjectURL(blob);
+                          const link = document.createElement('a');
+                          link.href = url;
+                          link.download = 'logo_sman1_losari_cirebon_resmi.svg';
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                          URL.revokeObjectURL(url);
+                          
+                          setLogoDownloadStatus('success');
+                          setTimeout(() => setLogoDownloadStatus('idle'), 4000);
+                        }
+                      }}
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-5 py-3 rounded-xl transition-all shadow-md hover:scale-102 active:scale-98 cursor-pointer flex items-center gap-1.5 uppercase tracking-wide"
+                      title="Unduh logo format SVG"
+                    >
+                      <Download className="w-4 h-4" /> Unduh File SVG Resmi
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        const svgElement = document.getElementById('sman-1-losari-logo-svg');
+                        if (svgElement) {
+                          const serializer = new XMLSerializer();
+                          let svgString = serializer.serializeToString(svgElement);
+                          if (!svgString.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {
+                            svgString = svgString.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+                          }
+                          navigator.clipboard.writeText(svgString);
+                          setLogoDownloadStatus('copied');
+                          setTimeout(() => setLogoDownloadStatus('idle'), 4000);
+                        }
+                      }}
+                      className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs px-5 py-3 rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
+                      title="Salin XML SVG ke papan klip"
+                    >
+                      <span>📋</span> Salin Kode Sumber SVG
+                    </button>
+                  </div>
+
+                  {logoDownloadStatus === 'success' && (
+                    <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl text-[11px] font-bold text-emerald-700 animate-pulse">
+                      🎉 Berhasil diunduh! File "logo_sman1_losari_cirebon_resmi.svg" telah berhasil disimpan di komputer Anda. Anda dapat menggunakannya langsung untuk kebutuhan cetak Anda.
+                    </div>
+                  )}
+
+                  {logoDownloadStatus === 'copied' && (
+                    <div className="p-3 bg-amber-50 border border-amber-100 rounded-xl text-[11px] font-bold text-amber-700 animate-pulse">
+                      📋 Berhasil disalin! Kode xml SVG telah tersimpan di papan klip Anda. Anda bisa menempelkannya (paste) di program desain profesional pilihan Anda seperti Adobe Illustrator, CorelDRAW, atau Figma.
+                    </div>
+                  )}
                 </div>
               </div>
 

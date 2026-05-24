@@ -31,7 +31,8 @@ import {
   Heart, 
   MessageCircle,
   Hash,
-  Globe
+  Globe,
+  Download
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { NewsItem, TeacherItem, FacilityItem, ActivityItem, AgendaItem } from '../types';
@@ -1427,7 +1428,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           
           {/* Logo brand */}
-          <div className="space-y-4">
+          <div className="space-y-4 text-left">
             <div className="flex items-center gap-2.5">
               <Sman1LosariLogo size="sm" primaryColor="#0F172A" accentColor="#F59E0B" />
               <div>
@@ -1440,6 +1441,34 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
             </p>
             <div className="text-[10px] text-slate-500 font-semibold font-mono">
               NPSN: 20214981 • {lang === 'id' ? 'Akreditasi A' : 'Accreditation A'}
+            </div>
+            <div className="pt-2">
+              <button
+                id="footer-download-logo-btn"
+                onClick={() => {
+                  const svgElement = document.getElementById('sman-1-losari-logo-svg');
+                  if (svgElement) {
+                    const serializer = new XMLSerializer();
+                    let svgString = serializer.serializeToString(svgElement);
+                    if (!svgString.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {
+                      svgString = svgString.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+                    }
+                    const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'logo_sman1_losari_cirebon_resmi.svg';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                  }
+                }}
+                className="text-[11px] font-black text-amber-500 hover:text-amber-400 flex items-center gap-1.5 transition-colors uppercase bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 cursor-pointer shadow-sm mt-3"
+                title="Download Official SVG Logo Programmatically"
+              >
+                <Download className="w-3.5 h-3.5" /> {lang === 'id' ? 'Unduh Logo SVG Resmi' : 'Download SVG Logo'}
+              </button>
             </div>
           </div>
 
