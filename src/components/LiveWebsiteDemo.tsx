@@ -461,6 +461,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
   const [galleryFilter, setGalleryFilter] = useState<'semua' | 'akademik' | 'eskul' | 'fasilitas'>('semua');
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
   const [showVisiMisi, setShowVisiMisi] = useState(false);
+  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userVote, setUserVote] = useState<string | null>(null);
   const [activeQuoteIndex, setActiveQuoteIndex] = useState(0);
@@ -886,7 +887,8 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
             {newsList.map((news) => (
               <div 
                 key={news.id}
-                className="bg-white border border-slate-200/55 rounded-2xl overflow-hidden hover:shadow-md transition-all flex flex-col justify-between"
+                onClick={() => setSelectedNews(news)}
+                className="bg-white border border-slate-200/55 rounded-2xl overflow-hidden hover:shadow-md hover:border-slate-350 transition-all flex flex-col justify-between cursor-pointer group"
               >
                 <div>
                   <div className="h-40 w-full overflow-hidden relative">
@@ -894,14 +896,14 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                       src={news.imageUrl} 
                       alt={t(news.title)}
                       referrerPolicy="no-referrer" 
-                      className="w-full h-full object-cover hover:scale-102 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
                     />
-                    <span className="absolute bottom-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded text-white uppercase tracking-wider" style={{ backgroundColor: c.primaryHex }}>
+                    <span className="absolute bottom-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded text-white uppercase tracking-wider shadow-sm" style={{ backgroundColor: c.primaryHex }}>
                       {t(news.category)}
                     </span>
                   </div>
-                  <div className="p-4 space-y-1.5">
-                    <span className="text-[10px] font-mono text-slate-405 block">{t(news.date)}</span>
+                  <div className="p-4 space-y-1.5 text-left">
+                    <span className="text-[10px] font-mono text-slate-400 block">{t(news.date)}</span>
                     <h5 className="font-extrabold text-slate-900 text-xs line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">
                       {t(news.title)}
                     </h5>
@@ -911,9 +913,16 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                   </div>
                 </div>
 
-                <div className="p-4 pt-0">
-                  <button className="text-[11px] font-bold flex items-center gap-1 hover:brightness-110 transition-all cursor-pointer" style={{ color: c.primaryHex }}>
-                    {t('readMore')} <ChevronRight className="w-3.5 h-3.5" style={{ color: c.accentHex }} />
+                <div className="p-4 pt-0 text-left">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedNews(news);
+                    }}
+                    className="text-[11px] font-bold flex items-center gap-1 hover:brightness-110 transition-all cursor-pointer" 
+                    style={{ color: c.primaryHex }}
+                  >
+                    {t('readMore')} <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" style={{ color: c.accentHex }} />
                   </button>
                 </div>
               </div>
@@ -1537,6 +1546,104 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                 >
                   {lang === 'id' ? 'Selesai Membaca' : 'Done Reading'}
                 </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* DIALOG POPUP MODAL FOR SELECTED NEWS */}
+      <AnimatePresence>
+        {selectedNews && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-slate-950/70 p-4 flex items-center justify-center z-50 backdrop-blur-sm"
+            id="news-modal-overlay"
+            onClick={() => setSelectedNews(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 15 }}
+              className="bg-white rounded-3xl overflow-hidden max-w-2xl w-full max-h-[85vh] overflow-y-auto space-y-0 text-slate-900 shadow-2xl relative border border-slate-100"
+              id="news-modal-content"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setSelectedNews(null)}
+                className="absolute top-4 right-4 p-2 bg-slate-900/80 hover:bg-slate-900 text-white rounded-full transition-all cursor-pointer z-35 backdrop-blur-xs border border-white/10"
+                id="news-modal-close-btn"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="h-48 sm:h-64 w-full overflow-hidden relative">
+                <img 
+                  src={selectedNews.imageUrl} 
+                  alt={t(selectedNews.title)} 
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent"></div>
+                
+                {/* Visual Category badge and title overlay */}
+                <div className="absolute bottom-4 left-6 right-6 text-left">
+                  <span className="text-[9px] font-black uppercase tracking-wider text-slate-950 px-2.5 py-1 rounded shadow-md inline-block mb-2" style={{ backgroundColor: c.accentHex }}>
+                    {t(selectedNews.category)}
+                  </span>
+                  <h4 className="text-base sm:text-xl font-black text-white leading-tight tracking-tight pr-6 drop-shadow-xs">
+                    {t(selectedNews.title)}
+                  </h4>
+                </div>
+              </div>
+
+              <div className="p-5 sm:p-7 space-y-5 text-left">
+                {/* Metadata Row */}
+                <div className="flex flex-wrap items-center justify-between text-[11px] text-slate-500 pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-1.5 font-medium">
+                    <Calendar className="w-3.5 h-3.5" style={{ color: c.accentHex }} />
+                    <span>{t(selectedNews.date)}</span>
+                  </div>
+                  <div className="font-bold flex items-center gap-1">
+                    <span>✍️ {selectedNews.author || 'Admin SMANSALOS'}</span>
+                  </div>
+                </div>
+
+                {/* Article Body Content */}
+                <div className="space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
+                  <p className="font-bold text-slate-900 text-xs sm:text-sm italic border-l-4 pl-3.5" style={{ borderColor: c.accentHex }}>
+                    {t(selectedNews.excerpt)}
+                  </p>
+                  
+                  <p>
+                    {lang === 'id' 
+                      ? 'Langkah strategis ini merupakan salah satu dari pilar dasar percepatan mutu pendidikan yang dicanangkan oleh SMA Negeri 1 Losari. Penataan platform literasi digital terus disempurnakan demi memfasilitasi kebutuhan seluruh murid, guru, dan staf kependidikan dalam memperkaya materi ajar yang luhur dan mandiri.'
+                      : 'This strategic step is one of the foundational pillars of education quality acceleration initiated by SMA Negeri 1 Losari. The digital literacy platform development continues to be refined to facilitate the needs of all students, educators, and staff in enriching high-quality and independent learning materials.'}
+                  </p>
+                  <p>
+                    {lang === 'id'
+                      ? 'Melalui kolaborasi erat dengan dinas pendidikan provinsi Jawa Barat dan instansi terkait, SMAN 1 Losari terus mengupayakan integrasi teknologi informasi di wilayah pesisir timur Cirebon guna meminimalisir gap kesenjangan digital nasional.'
+                      : 'Through close collaboration with the West Java provincial education department and related agencies, SMAN  1 Losari continues to strive for information technology integration in the eastern coastal area of Cirebon to minimize the national digital divide.'}
+                  </p>
+                  <p>
+                    {lang === 'id'
+                      ? 'Seluruh pihak sekolah menyambut baik penyaluran fasilitas penunjang serta menyuarakan optimisme tinggi bahwa program ini akan membawa SMAN  1 Losari menuju kancah prestasi internasional berlandaskan akhlak mulia dan persatuan global.'
+                      : 'The entire school community warmly welcomes the distribution of supporting facilities and expresses high optimism that this program will lead SMAN 1 Losari toward international achievements based on noble character and global unity.'}
+                  </p>
+                </div>
+
+                {/* Modal Footer controls */}
+                <div className="pt-4 border-t border-slate-100 flex justify-end">
+                  <button 
+                    onClick={() => setSelectedNews(null)}
+                    className="text-white text-xs font-bold px-5 py-2 rounded-xl hover:brightness-110 cursor-pointer shadow-md transition-all uppercase tracking-wide"
+                    style={{ backgroundColor: c.primaryHex }}
+                  >
+                    {lang === 'id' ? 'Tutup Artikel' : 'Close Article'}
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>
