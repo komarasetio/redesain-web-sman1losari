@@ -16,7 +16,14 @@ import {
   Image,
   User,
   Activity,
-  Award
+  Award,
+  Lock,
+  KeyRound,
+  ShieldCheck,
+  LogOut,
+  Eye,
+  EyeOff,
+  Server
 } from 'lucide-react';
 import { useSchoolData } from '../lib/schoolDataStore';
 import { NewsItem, TeacherItem, FacilityItem, ActivityItem } from '../types';
@@ -25,6 +32,16 @@ export default function CmsDashboard() {
   const { data, addItem, editItem, deleteItem, resetToDefault } = useSchoolData();
   const [activeSubTab, setActiveSubTab] = useState<'news' | 'announcements' | 'blogs' | 'facilities' | 'teachers' | 'activities' | 'gallery'>('news');
   
+  // Authentication states
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('sman1losari_admin_logged') === 'true';
+  });
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState('');
+
   // Editing state controls
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
@@ -193,6 +210,165 @@ export default function CmsDashboard() {
     { id: 'gallery', label: '🖼️ Galeri Foto', icon: Image, count: data.gallery.length },
   ];
 
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (username.trim().toLowerCase() === 'admin' && password === 'admin123') {
+      localStorage.setItem('sman1losari_admin_logged', 'true');
+      setIsAuthenticated(true);
+      setLoginError('');
+      setUsername('');
+      setPassword('');
+    } else {
+      setLoginError('ID Admin atau Kata Sandi salah! Hubungi Tim IT SMANSALOS.');
+    }
+  };
+
+  const handleLogout = () => {
+    if (confirm('Apakah Anda yakin ingin keluar dari Sesi Pengelolaan Admin?')) {
+      localStorage.removeItem('sman1losari_admin_logged');
+      setIsAuthenticated(false);
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-4xl mx-auto space-y-8" id="admin-login-wrapper">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+          
+          {/* Left Column: Educational Requirements for cPanel, Vercel & CRUD (Lines of explanation) */}
+          <div className="md:col-span-7 bg-white p-6 rounded-2xl border border-slate-200/60 shadow-xs space-y-6">
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-black tracking-widest text-[#1E293B] bg-slate-100 px-2.5 py-1 rounded inline-block uppercase">Bimbingan Arsitektur</span>
+              <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <Server className="w-5 h-5 text-indigo-600" />
+                Persyaratan Rilis & CRUD Produksi Real
+              </h3>
+              <p className="text-slate-500 text-xs leading-relaxed">
+                Aplikasi SMAN 1 Losari ini menggunakan arsitektur <strong className="text-slate-800">React + Vite SPA</strong>. Saat ini, perubahan tambah/edit/hapus data disimpan di <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-[10px]">localStorage</code> browser Anda secara instan.
+              </p>
+              <p className="text-slate-500 text-xs leading-relaxed">
+                Agar perubahan data CRUD Anda dapat diakses secara publik oleh seluruh pengguna lewat internet, berikut adalah syarat-syarat produksinya:
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex gap-3 text-xs leading-relaxed">
+                <div className="w-5 h-5 bg-amber-100 rounded-full text-amber-800 font-bold flex items-center justify-center shrink-0 mt-0.5">1</div>
+                <div>
+                  <h4 className="font-bold text-slate-800">Database Berbasis Server (MySQL / Firestore)</h4>
+                  <p className="text-[11px] text-slate-550">
+                    Membutuhkan pangkalan data persisten terpusat, seperti relational <strong className="text-slate-700">MySQL</strong> di cPanel / VPS Anda atau NoSQL cloud gratis seperti <strong className="text-slate-700">Firebase Firestore</strong>.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 text-xs leading-relaxed">
+                <div className="w-5 h-5 bg-indigo-100 rounded-full text-indigo-800 font-bold flex items-center justify-center shrink-0 mt-0.5">2</div>
+                <div>
+                  <h4 className="font-bold text-slate-800">API Backend / Web Service (PHP / Express)</h4>
+                  <p className="text-[11px] text-slate-550">
+                    React tidak boleh tersambung langsung ke database demi aspek keamanan. Diperlukan skrip perantara seperti <strong className="text-slate-700">API PHP (koneksi PDO)</strong> pada hosting cPanel Anda untuk memproses query SQL <code className="bg-slate-100 px-1 py-0.5 text-[10px] rounded font-mono">INSERT/UPDATE/DELETE</code>.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 text-xs leading-relaxed">
+                <div className="w-5 h-5 bg-teal-100 rounded-full text-teal-800 font-bold flex items-center justify-center shrink-0 mt-0.5">3</div>
+                <div>
+                  <h4 className="font-bold text-slate-800">Tata Cara Deploy di cPanel Hosting</h4>
+                  <p className="text-[11px] text-slate-550">
+                    Jalankan perintah build lokal, lalu kompres isi folder hasil build yaitu folder <code className="text-emerald-700 font-bold font-mono">dist/</code> menjadi file ZIP. Unggah langsung melalui File Manager cPanel ke dalam folder <strong className="text-slate-800">public_html</strong>. Buat folder <strong className="text-indigo-600 font-mono">/api</strong> berisi file skrip PHP Anda untuk melayani data MySQL.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 bg-amber-50 rounded-xl border border-amber-200/50 flex gap-2 text-[11px] text-amber-800 leading-relaxed">
+              <span className="shrink-0 font-bold">💡 Informasi Keamanan:</span>
+              <span>Kunci enkripsi API, kredensial password admin mentah, atau akses database SQL wajib ditaruh di sisi server hosting (backend) dan tidak boleh dipaparkan langsung di client-side React demi mencegah peretasan!</span>
+            </div>
+          </div>
+
+          {/* Right Column: Interactive Login form */}
+          <div className="md:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 text-slate-100 shadow-xl space-y-6">
+            <div className="text-center space-y-1">
+              <div className="w-12 h-12 bg-amber-500 text-slate-900 font-black rounded-full flex items-center justify-center mx-auto shadow-md mb-2">
+                <Lock className="w-5 h-5 text-slate-900" />
+              </div>
+              <h3 className="font-black text-md text-white tracking-tight uppercase">Login Administrasi</h3>
+              <p className="text-slate-400 text-[11px]">Gerbang Otoritas Utama Pengelolaan Konten SMANSALOS</p>
+            </div>
+
+            {loginError && (
+              <div className="bg-red-500/20 border border-red-500/40 text-red-200 p-2.5 rounded-lg text-xs font-semibold flex items-start gap-1.5 animate-pulse">
+                <span>⚠️</span>
+                <span>{loginError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-300 uppercase tracking-wider block">ID Pengguna (Username)</label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+                    <User className="w-4 h-4" />
+                  </span>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={e => setUsername(e.target.value)}
+                    placeholder="Contoh: admin"
+                    required
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 px-3 pl-10 text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-300 uppercase tracking-wider block">Kata Sandi (Password)</label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+                    <KeyRound className="w-4 h-4" />
+                  </span>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="Contoh: admin123"
+                    required
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 px-3 pl-10 pr-10 text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-white"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black uppercase text-xs tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-[0.98] cursor-pointer"
+              >
+                <ShieldCheck className="w-4.5 h-4.5" />
+                Verifikasi & Masuk
+              </button>
+            </form>
+
+            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1 text-[11px] text-slate-400 leading-normal">
+              <span className="font-bold text-amber-500 block">🔑 Akun Simulasi Penguji:</span>
+              <p>ID Admin: <code className="bg-slate-900 border border-slate-800 px-1 py-0.5 rounded text-white font-mono">admin</code></p>
+              <p>Kata Sandi: <code className="bg-slate-900 border border-slate-800 px-1 py-0.5 rounded text-white font-mono">admin123</code></p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8" id="cms-dashboard-container">
       
@@ -201,19 +377,28 @@ export default function CmsDashboard() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/50 rounded-full blur-3xl -z-10" />
         <div className="space-y-2">
           <span className="text-xs font-semibold tracking-wider text-indigo-600 uppercase">PUSAT KONTROL CONTENT (CMS)</span>
-          <h2 className="text-2xl font-semibold text-slate-900 tracking-tight">Simulator Manajemen Database Sekolah</h2>
+          <h2 className="text-2xl font-semibold text-slate-900 tracking-tight">Pengelolaan Portal Informasi Sekolah</h2>
           <p className="text-slate-500 text-sm max-w-2xl">
-            Tambahkan, ubah, atau hapus berita penting, kalender pengumuman, data pendidik & sarana prasarana. Setiap perubahan data disimpan di lokal penyimpanan browser Anda dan akan langsung diterapkan di seluruh visualisasi website demo.
+            Sesi Aktif: <strong className="text-emerald-600">Administrator SMANSALOS</strong>. Perubahan yang Anda lakukan akan langsung di-sinkronisasikan dan di-update secara real-time ke halaman Demo Website Utama.
           </p>
         </div>
-        <button
-          onClick={handleResetAll}
-          className="flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs px-4 py-2.5 rounded-xl transition-all self-start cursor-pointer border border-red-200/50"
-          title="Kembalikan semua data ke setelan awal pabrikan"
-        >
-          <RotateCcw className="w-4 h-4" />
-          Setel Ulang Data Beranda
-        </button>
+        <div className="flex flex-col sm:flex-row gap-2 shrink-0">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all cursor-pointer border border-slate-800"
+          >
+            <LogOut className="w-4 h-4 text-amber-400" />
+            Keluar Sesi
+          </button>
+          <button
+            onClick={handleResetAll}
+            className="flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-650 font-bold text-xs px-4 py-2.5 rounded-xl transition-all cursor-pointer border border-red-200/50"
+            title="Kembalikan semua data ke setelan awal pabrikan"
+          >
+            <RotateCcw className="w-4 h-4 text-red-550" />
+            Reset Data
+          </button>
+        </div>
       </div>
 
       {/* Grid wrapper */}
