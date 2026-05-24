@@ -462,6 +462,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
   const [galleryFilter, setGalleryFilter] = useState<'semua' | 'akademik' | 'eskul' | 'fasilitas'>('semua');
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
   const [showVisiMisi, setShowVisiMisi] = useState(false);
+  const [visiImgError, setVisiImgError] = useState(false);
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userVote, setUserVote] = useState<string | null>(null);
@@ -854,31 +855,102 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
           {/* Main Huge Card: Visi-Misi (6/12) */}
           <div 
             onClick={() => setShowVisiMisi(true)}
-            className="lg:col-span-6 rounded-3xl overflow-hidden shadow-md relative group cursor-pointer border flex flex-col justify-end min-h-[380px] p-6 text-white"
-            style={{ backgroundColor: c.primaryHex, borderColor: `${c.accentHex}15` }}
+            className="lg:col-span-6 rounded-3xl overflow-hidden shadow-lg relative group cursor-pointer border flex flex-col justify-end min-h-[380px] p-8 text-white transition-all duration-500 hover:shadow-xl hover:translate-y-[-4px]"
+            style={{ 
+              backgroundColor: c.primaryHex, 
+              borderColor: `${c.accentHex}25`,
+              backgroundImage: `radial-gradient(ellipse at top right, ${c.accentHex}1D, transparent 55%), radial-gradient(circle at bottom left, ${c.primaryHex}D9, #090D16 100%)`
+            }}
           >
-            {/* Dark image background */}
-            <div className="absolute inset-0 z-0">
-              <img 
-                src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=700" 
-                alt="Visi SMAN 1 Losari" 
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover opacity-35 group-hover:scale-105 transition-all duration-700"
+            {/* Modern Animated Ambient Glows & Patterns */}
+            <div className="absolute inset-0 z-0 overflow-hidden">
+              {/* Blur light blobs */}
+              <div 
+                className="absolute top-[-15%] right-[-5%] w-[250px] h-[250px] rounded-full blur-3xl opacity-20 animate-pulse duration-5000"
+                style={{ backgroundColor: c.accentHex }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+              <div 
+                className="absolute bottom-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full blur-3xl opacity-30"
+                style={{ backgroundColor: c.primaryHex }}
+              />
+
+              {/* Decorative SVG Geometric Grid Web */}
+              <svg className="absolute inset-0 w-full h-full opacity-10" width="100%" height="100%">
+                <defs>
+                  <pattern id="grid-pattern-visi" width="24" height="24" patternUnits="userSpaceOnUse">
+                    <path d="M 24 0 L 0 0 0 24" fill="none" stroke="white" strokeWidth="0.5" />
+                  </pattern>
+                  <linearGradient id="grid-gradient-visi" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="white" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="white" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid-pattern-visi)" />
+                {/* Diagonal design lines */}
+                <line x1="0" y1="100%" x2="100%" y2="0" stroke="url(#grid-gradient-visi)" strokeWidth="1" />
+                <line x1="20%" y1="100%" x2="120%" y2="0" stroke="url(#grid-gradient-visi)" strokeWidth="1" strokeDasharray="4 4" />
+              </svg>
+
+              {/* Image element with state error-check */}
+              {!visiImgError && (
+                <img 
+                  src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=800" 
+                  alt="Visi SMAN 1 Losari" 
+                  referrerPolicy="no-referrer"
+                  onError={() => setVisiImgError(true)}
+                  className="absolute inset-0 w-full h-full object-cover opacity-25 group-hover:opacity-35 group-hover:scale-105 transition-all duration-700 mix-blend-overlay"
+                />
+              )}
+
+              {/* Glassmorphic dark gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/40 to-transparent" />
+            </div>
+
+            {/* Glowing Icon Emblem: floating badge decoration */}
+            <div className="absolute top-6 right-6 z-10 flex items-center justify-center">
+              <div 
+                className="w-14 h-14 rounded-2xl flex items-center justify-center border transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-md backdrop-blur-md"
+                style={{ 
+                  backgroundColor: `${c.primaryHex}E6`, 
+                  borderColor: `${c.accentHex}40`,
+                  boxShadow: `0 8px 30px ${c.accentHex}15`
+                }}
+              >
+                <Award 
+                  className="w-7 h-7 animate-pulse" 
+                  style={{ color: c.accentHex }} 
+                />
+              </div>
             </div>
 
             {/* Content Overlays */}
             <div className="relative z-10 space-y-4">
-              <span className="text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded inline-block text-slate-950" style={{ backgroundColor: c.accentHex }}>
-                {t('characterMain')}
-              </span>
-              <h4 className="text-xl md:text-2xl font-extrabold tracking-tight">{t('visimisi')}</h4>
-              <p className="text-slate-300 text-xs leading-relaxed line-clamp-2">
-                {t('visiExcerpt')}
-              </p>
-              <div className="flex items-center gap-1.5 text-xs font-bold group-hover:translate-x-1.5 transition-all" style={{ color: c.accentHex }}>
-                {lang === 'id' ? 'Klik untuk Membaca Visi Lengkap' : 'Click to Read Full Vision'} <ArrowUpRight className="w-4 h-4" />
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-extrabold tracking-widest uppercase px-3 py-1 rounded-full inline-block text-slate-900 shadow-xs" style={{ backgroundColor: c.accentHex }}>
+                  💎 {t('characterMain')}
+                </span>
+                <span className="text-[10px] bg-white/10 hover:bg-white/15 text-white/90 font-extrabold px-3 py-1 rounded-full border border-white/10 backdrop-blur-xs select-none">
+                  {lang === 'id' ? 'PILAR UTAMA' : 'MAIN PILLAR'}
+                </span>
+              </div>
+              
+              <div className="space-y-1.5 align-bottom">
+                <h4 className="text-2xl md:text-3xl font-black tracking-tight leading-tight bg-gradient-to-r from-white via-white to-slate-200 bg-clip-text text-transparent">
+                  {t('visimisi')}
+                </h4>
+                <p className="text-slate-200 text-xs font-medium leading-relaxed max-w-lg line-clamp-3 md:line-clamp-2">
+                  {t('visiExcerpt')}
+                </p>
+              </div>
+
+              <div 
+                className="pt-2 flex items-center gap-2 text-xs font-bold transition-all duration-300"
+                style={{ color: c.accentHex }}
+              >
+                <span className="group-hover:mr-2 transition-all duration-300">
+                  {lang === 'id' ? 'Klik untuk Membaca Visi Lengkap' : 'Click to Read Full Vision'}
+                </span> 
+                <ArrowUpRight className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
               </div>
             </div>
           </div>
