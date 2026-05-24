@@ -17,7 +17,14 @@ import {
   HelpCircle,
   Clock,
   ExternalLink,
-  Info
+  Info,
+  Lock,
+  KeyRound,
+  ShieldCheck,
+  Eye,
+  EyeOff,
+  User,
+  X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ColorGuide from './components/ColorGuide';
@@ -31,6 +38,41 @@ export default function App() {
   const [viewMode, setViewMode] = useState<'website' | 'workspace'>('website');
   const [activeTab, setActiveTab] = useState<'welcome' | 'live-demo' | 'color' | 'nav' | 'structure' | 'cms'>('welcome');
   const [selectedThemeId, setSelectedThemeId] = useState<string>('classic-scholar');
+
+  // Security Modal States
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState('');
+
+  const handleOpenWorkspace = () => {
+    const isLogged = localStorage.getItem('sman1losari_admin_logged') === 'true';
+    if (isLogged) {
+      setViewMode('workspace');
+      setActiveTab('cms'); // Go straight to database management on direct verification
+    } else {
+      setIsLoginModalOpen(true);
+      setLoginError('');
+      setUsername('');
+      setPassword('');
+    }
+  };
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (username.trim().toLowerCase() === 'admin' && password === 'admin123') {
+      localStorage.setItem('sman1losari_admin_logged', 'true');
+      setIsLoginModalOpen(false);
+      setViewMode('workspace');
+      setActiveTab('live-demo'); // Start viewing the live demo workspace
+      setLoginError('');
+      setUsername('');
+      setPassword('');
+    } else {
+      setLoginError('ID Admin atau Kata Sandi salah! Hubungi Tim IT SMANSALOS.');
+    }
+  };
 
   // Quick stats computed for the redesign overview card
   const summaryOutcomes = [
@@ -48,10 +90,7 @@ export default function App() {
 
         {/* Floating Developer/Workspace Toggle Button */}
         <button
-          onClick={() => {
-            setViewMode('workspace');
-            setActiveTab('live-demo');
-          }}
+          onClick={handleOpenWorkspace}
           className="fixed bottom-6 right-6 z-50 bg-slate-900/90 backdrop-blur-md hover:bg-slate-900 text-white px-4 py-2.5 rounded-full text-[10px] font-black tracking-wider uppercase shadow-2xl border border-white/10 hover:border-white/20 flex items-center gap-2 transition-all hover:scale-105 active:scale-95 group cursor-pointer"
           title="Buka Panel Evaluasi Redesain / Cari Tahu Perubahannya"
           id="toggle-workspace-button"
@@ -59,6 +98,111 @@ export default function App() {
           <span className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse shrink-0"></span>
           <span>Buka Panel Kontrol / Desain Hub</span>
         </button>
+
+        {/* SECURE SLATE-DEEP LOGIN MODAL */}
+        <AnimatePresence>
+          {isLoginModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsLoginModalOpen(false)}
+                className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
+              />
+              
+              {/* Modal Card container */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 15 }}
+                className="relative bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl text-slate-100 z-10 space-y-6"
+              >
+                {/* Close absolute button */}
+                <button
+                  type="button"
+                  onClick={() => setIsLoginModalOpen(false)}
+                  className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors p-1.5 rounded-full hover:bg-slate-800 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+
+                <div className="text-center space-y-1">
+                  <div className="w-12 h-12 bg-amber-500 text-slate-900 font-extrabold rounded-full flex items-center justify-center mx-auto shadow-md mb-2">
+                    <Lock className="w-5 h-5 text-slate-900" />
+                  </div>
+                  <h3 className="font-extrabold text-sm text-white tracking-tight uppercase">Verifikasi Akses Panel</h3>
+                  <p className="text-slate-400 text-[11px]">Butuh kredensial khusus untuk memodifikasi website</p>
+                </div>
+
+                {loginError && (
+                  <div className="bg-red-500/20 border border-red-500/40 text-red-200 p-2.5 rounded-xl text-xs font-semibold flex items-start gap-1.5 animate-pulse">
+                    <span>⚠️</span>
+                    <span>{loginError}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-300 uppercase tracking-wider block">ID Pengguna (Username)</label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+                        <User className="w-4 h-4" />
+                      </span>
+                      <input
+                        type="text"
+                        value={username}
+                        onChange={e => setUsername(e.target.value)}
+                        placeholder="Contoh: admin"
+                        required
+                        className="w-full bg-slate-950 border border-slate-800/80 rounded-xl py-2 px-3 pl-10 text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-300 uppercase tracking-wider block">Kata Sandi (Password)</label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+                        <KeyRound className="w-4 h-4" />
+                      </span>
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        placeholder="Masukkan sandi..."
+                        required
+                        className="w-full bg-slate-950 border border-slate-800/80 rounded-xl py-2 px-3 pl-10 pr-10 text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-white"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black uppercase text-xs tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-[0.98] cursor-pointer"
+                  >
+                    <ShieldCheck className="w-4.5 h-4.5" />
+                    Konfirmasi Masuk
+                  </button>
+                </form>
+
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800/60 space-y-1 text-[11px] text-slate-400 leading-normal">
+                  <span className="font-bold text-amber-500 block">🔑 Akun Penguji:</span>
+                  <p>ID Admin: <code className="bg-slate-900 border border-slate-800 px-1 py-0.5 rounded text-white font-mono">admin</code></p>
+                  <p>Kata Sandi: <code className="bg-slate-900 border border-slate-800 px-1 py-0.5 rounded text-white font-mono">admin123</code></p>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     );
   }
