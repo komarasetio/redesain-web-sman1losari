@@ -31,12 +31,41 @@ import Sman1LosariLogo from './Sman1LosariLogo';
 
 export default function CmsDashboard() {
   const { data, addItem, editItem, deleteItem, resetToDefault } = useSchoolData();
-  const [activeSubTab, setActiveSubTab] = useState<'news' | 'announcements' | 'blogs' | 'facilities' | 'teachers' | 'activities' | 'gallery' | 'logo'>('news');
+  const [activeSubTab, setActiveSubTab] = useState<'news' | 'announcements' | 'blogs' | 'facilities' | 'teachers' | 'activities' | 'gallery' | 'logo' | 'layout_settings'>('news');
   
   const [customLogo, setCustomLogo] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
     return localStorage.getItem('sman1losari_custom_logo');
   });
+
+  // Section Visibility/Layout States
+  const [showQuotes, setShowQuotes] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem('sman1losari_show_quotes') !== 'false';
+  });
+  const [showTeachers, setShowTeachers] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem('sman1losari_show_teachers') !== 'false';
+  });
+  const [showMaps, setShowMaps] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem('sman1losari_show_maps') !== 'false';
+  });
+  const [showActivities, setShowActivities] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem('sman1losari_show_activities') !== 'false';
+  });
+  const [showGallery, setShowGallery] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem('sman1losari_show_gallery') !== 'false';
+  });
+
+  const toggleSetting = (key: string, currentValue: boolean, setter: React.Dispatch<React.SetStateAction<boolean>>) => {
+    const nextValue = !currentValue;
+    setter(nextValue);
+    localStorage.setItem(key, String(nextValue));
+    window.dispatchEvent(new Event('sman1losari_layout_changed'));
+  };
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -247,6 +276,7 @@ export default function CmsDashboard() {
     { id: 'activities', label: '⚽ Aktivitas / Eskul', icon: Activity, count: data.activities.length },
     { id: 'gallery', label: '🖼️ Galeri Foto', icon: Image, count: data.gallery.length },
     { id: 'logo', label: '🛡️ Logo Sekolah', icon: ShieldCheck, count: customLogo ? 1 : 0 },
+    { id: 'layout_settings', label: '⚙️ Tata Letak & Menu', icon: Server, count: 5 },
   ];
 
   const handleLogin = (e: React.FormEvent) => {
@@ -483,7 +513,7 @@ export default function CmsDashboard() {
               <span>Kelola Data {categories.find(c => c.id === activeSubTab)?.label.split(' ').slice(1).join(' ')}</span>
             </h3>
             
-            {!isAdding && !editingId && activeSubTab !== 'logo' && (
+            {!isAdding && !editingId && activeSubTab !== 'logo' && activeSubTab !== 'layout_settings' && (
               <button
                 onClick={() => setIsAdding(true)}
                 className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs px-3.5 py-2 rounded-xl transition-all cursor-pointer shadow-sm hover:shadow-xs"
@@ -495,7 +525,7 @@ export default function CmsDashboard() {
           </div>
 
           {/* DYNAMIC FORMS FOR CREATING / ADDING DATA */}
-          {(isAdding || editingId) && activeSubTab !== 'logo' && (
+          {(isAdding || editingId) && activeSubTab !== 'logo' && activeSubTab !== 'layout_settings' && (
             <div className="p-5 bg-slate-50 border border-slate-150 rounded-xl space-y-4">
               <h4 className="font-black text-slate-900 text-xs uppercase tracking-wider text-indigo-600">
                 {isAdding ? 'Formulir Tambah Data Baru' : 'Formulir Edit Data Item'}
@@ -824,18 +854,18 @@ export default function CmsDashboard() {
           )}
 
           {/* RENDERING CURRENT DATA LIST FOR EACH ACTIVE SECTION */}
-          {!isAdding && !editingId && activeSubTab !== 'logo' && (
+          {!isAdding && !editingId && activeSubTab !== 'logo' && activeSubTab !== 'layout_settings' && (
             <div className="space-y-3" id="cms-item-records-holder">
               
               {/* If section is empty */}
-              {data[activeSubTab].length === 0 && (
+              {data[activeSubTab as keyof typeof data].length === 0 && (
                 <div className="text-center p-12 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-xs">
                   Tidak ada data untuk modul ini. Silakan klik "Tambah Baru" untuk mengisinya kembali.
                 </div>
               )}
 
               <div className="grid grid-cols-1 gap-3 max-h-[600px] overflow-y-auto pr-1">
-                {data[activeSubTab].map((item: any) => (
+                {(data[activeSubTab as keyof typeof data] as any[]).map((item: any) => (
                   <div 
                     key={item.id} 
                     className="flex flex-col sm:flex-row items-start sm:items-center justify-between border border-slate-150 p-4 rounded-xl hover:bg-slate-50 transition-colors gap-4 bg-white"
@@ -889,14 +919,14 @@ export default function CmsDashboard() {
                     {/* Controls */}
                     <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
                       <button
-                        onClick={() => startEdit(item.id, activeSubTab)}
+                        onClick={() => startEdit(item.id, activeSubTab as any)}
                         className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all border border-slate-100 hover:border-indigo-100"
                         title="Edit data item"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(activeSubTab, item.id)}
+                        onClick={() => handleDelete(activeSubTab as any, item.id)}
                         className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all border border-slate-100 hover:border-red-100"
                         title="Hapus data item"
                       >
@@ -1014,6 +1044,98 @@ export default function CmsDashboard() {
               <div className="p-4 bg-amber-50 rounded-xl border border-amber-100 flex gap-2 text-[11px] text-amber-800 leading-relaxed">
                 <span className="shrink-0 font-bold">💡 Catatan Sinkronisasi:</span>
                 <span>Perubahan logo di atas akan langsung diperbarui di seluruh bagian header website SMAN 1 Losari, panel dashboard admin, dan footer secara dinamis. Menghapus logo kustom akan memulihkan lambang vektor bawaan.</span>
+              </div>
+            </div>
+          )}
+
+          {activeSubTab === 'layout_settings' && (
+            <div className="space-y-6 animate-fadeIn" id="layout-settings-panel">
+              <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col md:flex-row items-center gap-4 justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="p-2.5 sm:p-3 bg-indigo-50 text-indigo-650 rounded-xl">
+                    <Server className="w-5 h-5 text-indigo-600" />
+                  </span>
+                  <div>
+                    <h4 className="font-extrabold text-slate-900 text-sm">Pengaturan Visibilitas Halaman Utama</h4>
+                    <p className="text-[11px] text-slate-500 leading-normal">
+                      Sembunyikan atau tampilkan modul bagian tertentu dari website SMAN 1 Losari sesuai kebutuhan dinamis sekolah.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  {
+                    key: 'sman1losari_show_quotes',
+                    title: '💬 Kutipan Inspiratif Mingguan',
+                    desc: 'Kutipan motivasi mingguan dari tokoh ternama (seperti Socrates) di atas daftar guru.',
+                    value: showQuotes,
+                    setter: setShowQuotes
+                  },
+                  {
+                    key: 'sman1losari_show_teachers',
+                    title: '👩‍🏫 Profil Guru & Tenaga Pendidik',
+                    desc: 'Daftar biodata ringkas guru SMAN 1 Losari beserta mata pelajaran yang diampu.',
+                    value: showTeachers,
+                    setter: setShowTeachers
+                  },
+                  {
+                    key: 'sman1losari_show_gallery',
+                    title: '🖼️ Galeri Foto Aktivitas Kampus',
+                    desc: 'Madding visual yang menampilkan pameran dokumentasi kegiatan belajar atau fasilitas.',
+                    value: showGallery,
+                    setter: setShowGallery
+                  },
+                  {
+                    key: 'sman1losari_show_activities',
+                    title: '⚽ Ruang Diversifikasi / Aktivitas Siswa',
+                    desc: 'Publikasi visual program ekstrakurikuler serta klub olahraga aktif di halaman utama.',
+                    value: showActivities,
+                    setter: setShowActivities
+                  },
+                  {
+                    key: 'sman1losari_show_maps',
+                    title: '📍 Peta Lokasi Google Maps',
+                    desc: 'Sematkan koordinat peta interaktif SMAN 1 Losari di dalam area footer bawah website.',
+                    value: showMaps,
+                    setter: setShowMaps
+                  }
+                ].map((item) => (
+                  <div 
+                    key={item.key} 
+                    className="border border-slate-200 rounded-2xl p-5 bg-white flex items-center justify-between shadow-xs hover:border-slate-350 transition-colors gap-4"
+                  >
+                    <div className="space-y-1 max-w-[80%]">
+                      <h5 className="font-extrabold text-slate-800 text-xs sm:text-sm">{item.title}</h5>
+                      <p className="text-[10px] sm:text-[11px] text-slate-500 leading-relaxed pr-1">
+                        {item.desc}
+                      </p>
+                      <span className={`inline-block text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-full mt-1.5 ${item.value ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/50' : 'bg-slate-100 text-slate-400'}`}>
+                        {item.value ? '● TAMPIL' : '○ DISEMBUNYIKAN'}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => toggleSetting(item.key, item.value, item.setter)}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                        item.value ? 'bg-indigo-600' : 'bg-slate-250'
+                      }`}
+                    >
+                      <span
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                          item.value ? 'translate-x-5' : 'translate-x-0'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="p-4 bg-amber-50 rounded-xl border border-amber-100 flex gap-2 text-[11px] text-amber-805 leading-relaxed">
+                <span className="shrink-0 font-bold">💡 Informasi Real-time:</span>
+                <span>Visibilitas bagian ini akan langsung disinkronkan secara instan ketiadaan atau keberadaannya di dalam iframe demo website sebelah kanan tanpa perlu memuat ulang keseluruhan halaman (hot-swapping).</span>
               </div>
             </div>
           )}

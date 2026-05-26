@@ -468,6 +468,42 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
   const [userVote, setUserVote] = useState<string | null>(null);
   const [activeQuoteIndex, setActiveQuoteIndex] = useState(0);
 
+  // Layout Section Visibilities
+  const [showQuotes, setShowQuotes] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem('sman1losari_show_quotes') !== 'false';
+  });
+  const [showTeachers, setShowTeachers] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem('sman1losari_show_teachers') !== 'false';
+  });
+  const [showMaps, setShowMaps] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem('sman1losari_show_maps') !== 'false';
+  });
+  const [showActivities, setShowActivities] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem('sman1losari_show_activities') !== 'false';
+  });
+  const [showGallery, setShowGallery] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem('sman1losari_show_gallery') !== 'false';
+  });
+
+  useEffect(() => {
+    const handleLayoutUpdate = () => {
+      setShowQuotes(localStorage.getItem('sman1losari_show_quotes') !== 'false');
+      setShowTeachers(localStorage.getItem('sman1losari_show_teachers') !== 'false');
+      setShowMaps(localStorage.getItem('sman1losari_show_maps') !== 'false');
+      setShowActivities(localStorage.getItem('sman1losari_show_activities') !== 'false');
+      setShowGallery(localStorage.getItem('sman1losari_show_gallery') !== 'false');
+    };
+    window.addEventListener('sman1losari_layout_changed', handleLayoutUpdate);
+    return () => {
+      window.removeEventListener('sman1losari_layout_changed', handleLayoutUpdate);
+    };
+  }, []);
+
   // Dynamic style parser depending on current theme
   const getThemeStyles = (id: string) => {
     switch (id) {
@@ -599,17 +635,21 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                 <span className="text-xs font-bold text-slate-800">{t('sambutan')}</span>
                 <span className="text-[10px] text-slate-400">{t('sambutanSub')}</span>
               </a>
-              <a href="#guru" className="p-2 rounded-lg hover:bg-slate-50 flex flex-col transition-all">
-                <span className="text-xs font-bold text-slate-800">{t('teachers')}</span>
-                <span className="text-[10px] text-slate-400">{t('teachersSub')}</span>
-              </a>
+              {showTeachers && (
+                <a href="#guru" className="p-2 rounded-lg hover:bg-slate-50 flex flex-col transition-all">
+                  <span className="text-xs font-bold text-slate-800">{t('teachers')}</span>
+                  <span className="text-[10px] text-slate-400">{t('teachersSub')}</span>
+                </a>
+              )}
             </div>
           </div>
 
           <a href="#resources" className="transition-colors font-bold" style={{ color: `${c.primaryHex}dd` }}>{t('academicLink')}</a>
           <a href="#resources" className="transition-colors font-bold" style={{ color: `${c.primaryHex}dd` }}>{t('kesiswaan')}</a>
           <a href="#resources" className="transition-colors font-bold" style={{ color: `${c.primaryHex}dd` }}>{t('facilities')}</a>
-          <a href="#guru" className="transition-colors font-bold" style={{ color: `${c.primaryHex}dd` }}>{t('contact')}</a>
+          {showTeachers && (
+            <a href="#guru" className="transition-colors font-bold" style={{ color: `${c.primaryHex}dd` }}>{t('contact')}</a>
+          )}
         </nav>
 
         {/* Action Center - Search & Button */}
@@ -688,8 +728,12 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
               <a href="#" onClick={() => { setShowVisiMisi(true); setMobileMenuOpen(false); }} className="px-3 py-2 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-800 block">{t('visimisi')}</a>
               <a href="#sambutan" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-800 block">{t('sambutan')}</a>
               <a href="#resources" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-800 block">{t('beritaTab')} & {t('pengumumanTab')}</a>
-              <a href="#galeri" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-800 block">{t('galKampus')}</a>
-              <a href="#guru" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-800 block">{t('teachers')}</a>
+              {showGallery && (
+                <a href="#galeri" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-800 block">{t('galKampus')}</a>
+              )}
+              {showTeachers && (
+                <a href="#guru" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-800 block">{t('teachers')}</a>
+              )}
             </div>
 
             {/* Quick links for mobile screen layout efficiency */}
@@ -1197,252 +1241,260 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
       </section>
 
       {/* 8. NEW INTERACTIVE AGENDA COMPONENT (Solves Empty blank space of old site) */}
-      <section className="bg-slate-900 text-white py-16 px-4 md:px-8 relative overflow-hidden">
-        {/* Soft layout designs */}
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl" />
-        
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Calendar visual (Left 4/12) */}
-          <div className="lg:col-span-4 bg-slate-950/80 p-6 rounded-2xl border border-slate-800 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-amber-500 uppercase tracking-widest">{t('calendarTitle')}</span>
-              <span className="text-xs text-slate-400">{lang === 'id' ? 'Mei 25 & 26' : 'May 25 & 26'}</span>
+      {showActivities && (
+        <section className="bg-slate-900 text-white py-16 px-4 md:px-8 relative overflow-hidden">
+          {/* Soft layout designs */}
+          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl" />
+          
+          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            {/* Calendar visual (Left 4/12) */}
+            <div className="lg:col-span-4 bg-slate-950/80 p-6 rounded-2xl border border-slate-800 space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-amber-500 uppercase tracking-widest">{t('calendarTitle')}</span>
+                <span className="text-xs text-slate-400">{lang === 'id' ? 'Mei 25 & 26' : 'May 25 & 26'}</span>
+              </div>
+              
+              <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-slate-500">
+                {lang === 'id' ? ['S', 'S', 'R', 'K', 'J', 'S', 'M'].map((day, idx) => (
+                  <div key={idx} className="font-bold py-1 text-slate-500">{day}</div>
+                )) : ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => (
+                  <div key={idx} className="font-bold py-1 text-slate-500">{day}</div>
+                ))}
+                {Array.from({ length: 28 }).map((_, idx) => {
+                  const dayNum = idx + 1;
+                  const isSpecial = dayNum === 23 || dayNum === 29 || dayNum === 30;
+                  return (
+                    <div 
+                      key={idx} 
+                      className={`p-1.5 rounded-md font-bold transition-all ${
+                        isSpecial 
+                          ? 'bg-amber-500 text-slate-950 scale-105' 
+                          : 'text-slate-400 hover:bg-slate-800'
+                      }`}
+                    >
+                      {dayNum}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="bg-slate-900 p-3 rounded-lg flex items-start gap-1.5 text-[10px] text-slate-450">
+                <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0 mt-1" />
+                <span>{t('orangeDot')}</span>
+              </div>
             </div>
-            
-            <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-slate-500">
-              {lang === 'id' ? ['S', 'S', 'R', 'K', 'J', 'S', 'M'].map((day, idx) => (
-                <div key={idx} className="font-bold py-1 text-slate-500">{day}</div>
-              )) : ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => (
-                <div key={idx} className="font-bold py-1 text-slate-500">{day}</div>
-              ))}
-              {Array.from({ length: 28 }).map((_, idx) => {
-                const dayNum = idx + 1;
-                const isSpecial = dayNum === 23 || dayNum === 29 || dayNum === 30;
-                return (
+
+            {/* Core Content (Right 8/12) */}
+            <div className="lg:col-span-8 space-y-6">
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-amber-500 uppercase tracking-wider block">{t('agendaBrief')}</span>
+                <h4 className="text-2xl md:text-3xl font-extrabold tracking-tight">{t('agendaTitle')}</h4>
+                <p className="text-slate-400 text-xs">{t('agendaDesc')}</p>
+              </div>
+
+              <div className="space-y-4">
+                {[
+                  { date: lang === 'id' ? '29 Mei 2026' : 'May 29, 2026', title: lang === 'id' ? 'Sosialisasi Alur Pendaftaran SPMB Online 2026' : 'Socialization of 2026 Online SPMB Registration Procedures', time: '09:00 - 12:00', loc: lang === 'id' ? 'Aula Serbaguna SMANSALOS' : 'SMANSALOS Multi-purpose Hall' },
+                  { date: lang === 'id' ? '15 Juni 2026' : 'Jun 15, 2026', title: lang === 'id' ? 'Rapat Pleno Komite & Istighosah Kelulusan Kelas XII' : 'General Committee Plenary & Spiritual Prayer for Grade XII Graduation', time: '13:00 - End', loc: lang === 'id' ? 'Masjid At-Taqwa Kampus' : 'Kampus At-Taqwa Mosque' }
+                ].map((ag, idx) => (
                   <div 
                     key={idx} 
-                    className={`p-1.5 rounded-md font-bold transition-all ${
-                      isSpecial 
-                        ? 'bg-amber-500 text-slate-950 scale-105' 
-                        : 'text-slate-400 hover:bg-slate-800'
-                    }`}
+                    className="bg-slate-950 p-4 rounded-xl border border-slate-800/80 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-amber-500/50 transition-colors"
                   >
-                    {dayNum}
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-black text-amber-500">{ag.date}</span>
+                        <span className="text-[9px] text-slate-550 font-mono">| {ag.time}</span>
+                      </div>
+                      <h5 className="font-extrabold text-xs text-white leading-normal">{ag.title}</h5>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-slate-400 bg-slate-900 px-2.5 py-1 rounded border border-slate-800 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-amber-500" /> {ag.loc}
+                      </span>
+                    </div>
                   </div>
-                );
-              })}
-            </div>
+                ))}
+              </div>
 
-            <div className="bg-slate-900 p-3 rounded-lg flex items-start gap-1.5 text-[10px] text-slate-400">
-              <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0 mt-1" />
-              <span>{t('orangeDot')}</span>
+              {/* Quick Poll / Interaction to solve stiffness */}
+              <div className="bg-slate-950/40 p-5 rounded-xl border border-slate-805 space-y-3">
+                <h5 className="font-bold text-xs text-slate-205">📊 {t('pollAspirasi')}</h5>
+                {userVote ? (
+                  <p className="text-xs text-emerald-400 font-bold">{t('pollVoteThanks')} (65% {t('pollAgreed')})</p>
+                ) : (
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {[
+                      { id: 'Studio Podcast', label: lang === 'id' ? 'Studio Podcast Siswa' : 'Student Podcast Studio' },
+                      { id: 'Laboratorium Robotika', label: lang === 'id' ? 'Laboratorium Robotika' : 'Robotics Laboratory' },
+                      { id: 'Sintesis Audio Teater', label: lang === 'id' ? 'Sintesis Audio Teater' : 'Audio Synthesizer Theater' }
+                    ].map((opt) => (
+                      <button 
+                        key={opt.id}
+                        onClick={() => handleVote(opt.id)}
+                        className="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[10px] font-bold px-3 py-1.5 rounded-lg text-slate-350 transition-colors cursor-pointer"
+                      >
+                        👍 {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
+        </section>
+      )}
 
-          {/* Core Content (Right 8/12) */}
-          <div className="lg:col-span-8 space-y-6">
-            <div className="space-y-2">
-              <span className="text-xs font-semibold text-amber-500 uppercase tracking-wider block">{t('agendaBrief')}</span>
-              <h4 className="text-2xl md:text-3xl font-extrabold tracking-tight">{t('agendaTitle')}</h4>
-              <p className="text-slate-400 text-xs">{t('agendaDesc')}</p>
-            </div>
+      {/* 9. MASONRY STYLE PHOTO GALLERY (Fully filterable, solves rigid grid) */}
+      {showGallery && (
+        <section className="py-16 md:py-20 px-4 md:px-8 max-w-7xl mx-auto space-y-8" id="galeri">
+          <div className="text-center space-y-2 max-w-sm mx-auto">
+            <span className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('galKampus')}</span>
+            <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">{t('galTitle')}</h3>
+            <p className="text-slate-500 text-xs">{t('galDesc')}</p>
+          </div>
 
-            <div className="space-y-4">
-              {[
-                { date: lang === 'id' ? '29 Mei 2026' : 'May 29, 2026', title: lang === 'id' ? 'Sosialisasi Alur Pendaftaran SPMB Online 2026' : 'Socialization of 2026 Online SPMB Registration Procedures', time: '09:00 - 12:00', loc: lang === 'id' ? 'Aula Serbaguna SMANSALOS' : 'SMANSALOS Multi-purpose Hall' },
-                { date: lang === 'id' ? '15 Juni 2026' : 'Jun 15, 2026', title: lang === 'id' ? 'Rapat Pleno Komite & Istighosah Kelulusan Kelas XII' : 'General Committee Plenary & Spiritual Prayer for Grade XII Graduation', time: '13:00 - End', loc: lang === 'id' ? 'Masjid At-Taqwa Kampus' : 'Kampus At-Taqwa Mosque' }
-              ].map((ag, idx) => (
-                <div 
-                  key={idx} 
-                  className="bg-slate-950 p-4 rounded-xl border border-slate-800/80 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-amber-500/50 transition-colors"
+          {/* Filters buttons */}
+          <div className="flex flex-wrap justify-center gap-1.5">
+            {[
+              { filter: 'semua', label: `🖼️ ${t('allMading')}` },
+              { filter: 'akademik', label: `🥼 ${t('akademikFilter')}` },
+              { filter: 'eskul', label: `⚽ ${t('eskulFilter')}` },
+              { filter: 'fasilitas', label: `🏫 ${t('fasilitasFilter')}` }
+            ].map((btn) => (
+              <button 
+                key={btn.filter}
+                onClick={() => setGalleryFilter(btn.filter as any)}
+                className={`px-3 py-1.5 text-xs font-bold rounded-full transition-all cursor-pointer ${
+                  galleryFilter === btn.filter 
+                    ? 'text-white' 
+                    : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200/90'
+                }`}
+                style={galleryFilter === btn.filter ? { backgroundColor: c.primaryHex } : {}}
+              >
+                {btn.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Gallery grid of original images types reconstructed in premium cards */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <AnimatePresence>
+              {filteredGallery.map((item, idx) => (
+                <motion.div 
+                  key={idx}
+                  layout
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.25 }}
+                  className="bg-white border border-slate-200/50 rounded-xl overflow-hidden shadow-2xs group relative hover:shadow-xs transition-shadow"
                 >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-black text-amber-500">{ag.date}</span>
-                      <span className="text-[9px] text-slate-500 font-mono">| {ag.time}</span>
+                  <div className="h-44 w-full overflow-hidden relative">
+                    <img 
+                      src={item.img} 
+                      alt={t(item.title)} 
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover group-hover:scale-104 transition-all duration-300"
+                    />
+                    <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="bg-white/90 text-slate-900 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs flex items-center gap-1">
+                        {lang === 'id' ? 'Zoom Aktivitas' : 'Zoom Activity'} <ArrowUpRight className="w-3 h-3" />
+                      </span>
                     </div>
-                    <h5 className="font-extrabold text-xs text-white leading-normal">{ag.title}</h5>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-slate-400 bg-slate-900 px-2.5 py-1 rounded border border-slate-800 flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-amber-500" /> {ag.loc}
+                  <div className="p-3 text-center">
+                    <span className="text-[10px] font-bold text-slate-800 leading-tight block truncate">
+                      {t(item.title)}
                     </span>
                   </div>
-                </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </section>
+      )}
+
+      {/* 10. MOTIVATION QUOTES SLIDER (Solves flat quote indicator text of old site) */}
+      {showQuotes && (
+        <section className="py-12 text-slate-100 text-center relative z-10 overflow-hidden" style={{ backgroundColor: c.primaryHex }}>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
+          <div className="max-w-2xl mx-auto px-4 space-y-4">
+            <span className="text-[10px] font-bold tracking-widest text-amber-500 uppercase block">{lang === 'id' ? 'KUTIPAN INSPIRATIF MINGGU INI' : 'INSPIRATIONAL QUOTE OF THE WEEK'}</span>
+            
+            <div className="min-h-[60px] flex items-center justify-center">
+              <p className="text-sm md:text-base font-medium tracking-wide italic leading-relaxed">
+                "{staticQuotes[activeQuoteIndex].text}"
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-2 pt-2">
+              {staticQuotes.map((_, idx) => (
+                <button 
+                  key={idx}
+                  onClick={() => setActiveQuoteIndex(idx)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${
+                    activeQuoteIndex === idx ? 'bg-amber-500 w-6' : 'bg-white/20 hover:bg-white/40'
+                  }`}
+                />
               ))}
             </div>
 
-            {/* Quick Poll / Interaction to solve stiffness */}
-            <div className="bg-slate-950/40 p-5 rounded-xl border border-slate-800 space-y-3">
-              <h5 className="font-bold text-xs text-slate-200">📊 {t('pollAspirasi')}</h5>
-              {userVote ? (
-                <p className="text-xs text-emerald-400 font-bold">{t('pollVoteThanks')} (65% {t('pollAgreed')})</p>
-              ) : (
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {[
-                    { id: 'Studio Podcast', label: lang === 'id' ? 'Studio Podcast Siswa' : 'Student Podcast Studio' },
-                    { id: 'Laboratorium Robotika', label: lang === 'id' ? 'Laboratorium Robotika' : 'Robotics Laboratory' },
-                    { id: 'Sintesis Audio Teater', label: lang === 'id' ? 'Sintesis Audio Teater' : 'Audio Synthesizer Theater' }
-                  ].map((opt) => (
-                    <button 
-                      key={opt.id}
-                      onClick={() => handleVote(opt.id)}
-                      className="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[10px] font-bold px-3 py-1.5 rounded-lg text-slate-350 transition-colors cursor-pointer"
-                    >
-                      👍 {opt.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            <span className="text-[10px] font-bold text-slate-400 block">— {staticQuotes[activeQuoteIndex].author}</span>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* 9. MASONRY STYLE PHOTO GALLERY (Fully filterable, solves rigid grid) */}
-      <section className="py-16 md:py-20 px-4 md:px-8 max-w-7xl mx-auto space-y-8" id="galeri">
-        <div className="text-center space-y-2 max-w-sm mx-auto">
-          <span className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('galKampus')}</span>
-          <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">{t('galTitle')}</h3>
-          <p className="text-slate-500 text-xs">{t('galDesc')}</p>
-        </div>
+      {/* 11. DAFTAR GURU / FACULTY CAROUSEL SHOWCASE */}
+      {showTeachers && (
+        <section className="py-16 md:py-20 px-4 md:px-8 max-w-7xl mx-auto space-y-8" id="guru">
+          <div className="text-center space-y-2 max-w-sm mx-auto">
+            <span className="text-xs font-bold uppercase tracking-widest text-slate-400">TENAGA PENDIDIK</span>
+            <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Profil Guru Terhormat</h3>
+            <p className="text-slate-500 text-xs">{t('teachersSectionDesc')}</p>
+          </div>
 
-        {/* Filters buttons */}
-        <div className="flex flex-wrap justify-center gap-1.5">
-          {[
-            { filter: 'semua', label: `🖼️ ${t('allMading')}` },
-            { filter: 'akademik', label: `🥼 ${t('akademikFilter')}` },
-            { filter: 'eskul', label: `⚽ ${t('eskulFilter')}` },
-            { filter: 'fasilitas', label: `🏫 ${t('fasilitasFilter')}` }
-          ].map((btn) => (
-            <button 
-              key={btn.filter}
-              onClick={() => setGalleryFilter(btn.filter as any)}
-              className={`px-3 py-1.5 text-xs font-bold rounded-full transition-all cursor-pointer ${
-                galleryFilter === btn.filter 
-                  ? 'text-white' 
-                  : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200/90'
-              }`}
-              style={galleryFilter === btn.filter ? { backgroundColor: c.primaryHex } : {}}
-            >
-              {btn.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Gallery grid of original images types reconstructed in premium cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <AnimatePresence>
-            {filteredGallery.map((item, idx) => (
-              <motion.div 
-                key={idx}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.25 }}
-                className="bg-white border border-slate-200/50 rounded-xl overflow-hidden shadow-2xs group relative hover:shadow-xs transition-shadow"
+          {/* Guru Grid (Resolves rigid circular overlay profile grids) */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {teachersList.map((teacher) => (
+              <div 
+                key={teacher.id}
+                className="bg-white border border-slate-205 rounded-xl overflow-hidden hover:shadow-md transition-all flex flex-col justify-between group"
               >
-                <div className="h-44 w-full overflow-hidden relative">
-                  <img 
-                    src={item.img} 
-                    alt={t(item.title)} 
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover:scale-104 transition-all duration-300"
-                  />
-                  <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="bg-white/90 text-slate-900 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs flex items-center gap-1">
-                      {lang === 'id' ? 'Zoom Aktivitas' : 'Zoom Activity'} <ArrowUpRight className="w-3 h-3" />
+                <div>
+                  <div className="h-44 w-full overflow-hidden relative bg-slate-100">
+                    <img 
+                      src={teacher.imageUrl} 
+                      alt={t(teacher.name)} 
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover group-hover:scale-102 transition-all duration-300"
+                    />
+                    {/* Subject Tag badge absolutely mounted */}
+                    <span className="absolute bottom-2 left-2 text-[8px] font-black px-1.5 py-0.5 rounded bg-slate-950 text-white uppercase tracking-wider">
+                      {t(teacher.subject)}
+                    </span>
+                  </div>
+                  <div className="p-3 text-center space-y-1">
+                    <h5 className="font-extrabold text-slate-900 text-xs group-hover:text-blue-600 transition-colors">
+                      {t(teacher.name)}
+                    </h5>
+                    <span className="text-[9px] text-slate-400 font-medium block">
+                      {t(teacher.role)}
                     </span>
                   </div>
                 </div>
-                <div className="p-3 text-center">
-                  <span className="text-[10px] font-bold text-slate-800 leading-tight block truncate">
-                    {t(item.title)}
-                  </span>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-      </section>
 
-      {/* 10. MOTIVATION QUOTES SLIDER (Solves flat quote indicator text of old site) */}
-      <section className={`py-12 text-slate-100 text-center relative z-10 overflow-hidden`} style={{ backgroundColor: c.primaryHex }}>
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
-        <div className="max-w-2xl mx-auto px-4 space-y-4">
-          <span className="text-[10px] font-bold tracking-widest text-amber-500 uppercase block">{lang === 'id' ? 'KUTIPAN INSPIRATIF MINGGU INI' : 'INSPIRATIONAL QUOTE OF THE WEEK'}</span>
-          
-          <div className="min-h-[60px] flex items-center justify-center">
-            <p className="text-sm md:text-base font-medium tracking-wide italic leading-relaxed">
-              "{staticQuotes[activeQuoteIndex].text}"
-            </p>
-          </div>
-
-          <div className="flex items-center justify-center gap-2 pt-2">
-            {staticQuotes.map((_, idx) => (
-              <button 
-                key={idx}
-                onClick={() => setActiveQuoteIndex(idx)}
-                className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${
-                  activeQuoteIndex === idx ? 'bg-amber-500 w-6' : 'bg-white/20 hover:bg-white/40'
-                }`}
-              />
-            ))}
-          </div>
-
-          <span className="text-[10px] font-bold text-slate-400 block">— {staticQuotes[activeQuoteIndex].author}</span>
-        </div>
-      </section>
-
-      {/* 11. DAFTAR GURU / FACULTY CAROUSEL SHOWCASE */}
-      <section className="py-16 md:py-20 px-4 md:px-8 max-w-7xl mx-auto space-y-8" id="guru">
-        <div className="text-center space-y-2 max-w-sm mx-auto">
-          <span className="text-xs font-bold uppercase tracking-widest text-slate-400">TENAGA PENDIDIK</span>
-          <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Profil Guru Terhormat</h3>
-          <p className="text-slate-500 text-xs">{t('teachersSectionDesc')}</p>
-        </div>
-
-        {/* Guru Grid (Resolves rigid circular overlay profile grids) */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {teachersList.map((teacher) => (
-            <div 
-              key={teacher.id}
-              className="bg-white border border-slate-205 rounded-xl overflow-hidden hover:shadow-md transition-all flex flex-col justify-between group"
-            >
-              <div>
-                <div className="h-44 w-full overflow-hidden relative bg-slate-100">
-                  <img 
-                    src={teacher.imageUrl} 
-                    alt={t(teacher.name)} 
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover:scale-102 transition-all duration-300"
-                  />
-                  {/* Subject Tag badge absolutely mounted */}
-                  <span className="absolute bottom-2 left-2 text-[8px] font-black px-1.5 py-0.5 rounded bg-slate-950 text-white uppercase tracking-wider">
-                    {t(teacher.subject)}
-                  </span>
-                </div>
-                <div className="p-3 text-center space-y-1">
-                  <h5 className="font-extrabold text-slate-900 text-xs group-hover:text-blue-600 transition-colors">
-                    {t(teacher.name)}
-                  </h5>
-                  <span className="text-[9px] text-slate-400 font-medium block">
-                    {t(teacher.role)}
-                  </span>
+                {/* Interaction Panel */}
+                <div className="p-3 pt-0 border-t border-slate-100">
+                  <button className="w-full py-1 bg-slate-50 group-hover:bg-blue-600 group-hover:text-white transition-all rounded text-[9px] font-bold text-slate-600 flex items-center justify-center gap-1">
+                    {t('contactTeacher')} 💬
+                  </button>
                 </div>
               </div>
-
-              {/* Interaction Panel */}
-              <div className="p-3 pt-0 border-t border-slate-100">
-                <button className="w-full py-1 bg-slate-50 group-hover:bg-blue-600 group-hover:text-white transition-all rounded text-[9px] font-bold text-slate-600 flex items-center justify-center gap-1">
-                  {t('contactTeacher')} 💬
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 12. VIDEO PROFILE OF SMAN 1 LOSARI */}
       <section className="py-12 bg-slate-50 px-4 md:px-8 max-w-7xl mx-auto">
@@ -1497,7 +1549,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
 
       {/* 13. MODERN FOOTER GRID WITH LOCATOR MAP */}
       <footer className="bg-slate-950 border-t border-slate-900 text-slate-400 text-xs py-16 px-4 md:px-8">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className={`max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 ${showMaps ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-8`}>
           
           {/* Logo brand */}
           <div className="space-y-4 text-left">
@@ -1546,43 +1598,45 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
           </div>
 
           {/* Modern Interactive Google Maps Component */}
-          <div className="space-y-4">
-            <h5 className="font-extrabold text-white text-xs tracking-wider uppercase">{lang === 'id' ? 'Lokasi Sekolah' : 'School Location'}</h5>
-            <div className="relative rounded-2xl overflow-hidden border border-slate-800 h-44 bg-slate-950 shadow-lg group transition-all duration-300 hover:border-slate-700">
-              {/* Map Iframe */}
-              <iframe
-                src="https://maps.google.com/maps?q=-6.8419,108.8076&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                width="100%"
-                height="100%"
-                style={{ border: 0, filter: 'contrast(1.1) brightness(0.9) grayscale(15%)' }}
-                allowFullScreen={false}
-                loading="lazy"
-                referrerPolicy="no-referrer"
-                title="SMAN 1 Losari Location Map"
-                className="w-full h-full opacity-80 group-hover:opacity-100 transition-opacity duration-300"
-              ></iframe>
+          {showMaps && (
+            <div className="space-y-4">
+              <h5 className="font-extrabold text-white text-xs tracking-wider uppercase">{lang === 'id' ? 'Lokasi Sekolah' : 'School Location'}</h5>
+              <div className="relative rounded-2xl overflow-hidden border border-slate-800 h-44 bg-slate-950 shadow-lg group transition-all duration-300 hover:border-slate-700">
+                {/* Map Iframe */}
+                <iframe
+                  src="https://maps.google.com/maps?q=-6.8419,108.8076&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, filter: 'contrast(1.1) brightness(0.9) grayscale(15%)' }}
+                  allowFullScreen={false}
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                  title="SMAN 1 Losari Location Map"
+                  className="w-full h-full opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                ></iframe>
 
-              {/* Coordinates Float Tag Overlay */}
-              <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1 pointer-events-none">
-                <span className="bg-slate-950/80 backdrop-blur-md text-[9px] font-black tracking-wider text-amber-400 px-2.5 py-1 rounded-lg border border-white/5 uppercase shadow-md inline-block">
-                  📍 -6.8419, 108.8076
-                </span>
-              </div>
-              
-              {/* Bottom Actions Overlay */}
-              <div className="absolute bottom-2 right-2 z-10">
-                <a 
-                  href="https://maps.google.com/?q=-6.8419,108.8076" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-lg shadow-md transition-all flex items-center gap-1 border border-indigo-400/30"
-                >
-                  <span>Buka Maps</span>
-                  <ArrowUpRight className="w-3 h-3" />
-                </a>
+                {/* Coordinates Float Tag Overlay */}
+                <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1 pointer-events-none">
+                  <span className="bg-slate-950/80 backdrop-blur-md text-[9px] font-black tracking-wider text-amber-400 px-2.5 py-1 rounded-lg border border-white/5 uppercase shadow-md inline-block">
+                    📍 -6.8419, 108.8076
+                  </span>
+                </div>
+                
+                {/* Bottom Actions Overlay */}
+                <div className="absolute bottom-2 right-2 z-10">
+                  <a 
+                    href="https://maps.google.com/?q=-6.8419,108.8076" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-lg shadow-md transition-all flex items-center gap-1 border border-indigo-400/30"
+                  >
+                    <span>Buka Maps</span>
+                    <ArrowUpRight className="w-3 h-3" />
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
         </div>
 
