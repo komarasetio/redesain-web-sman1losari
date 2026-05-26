@@ -38,7 +38,12 @@ import CmsDashboard from './components/CmsDashboard';
 export default function App() {
   const [viewMode, setViewMode] = useState<'website' | 'workspace'>('website');
   const [activeTab, setActiveTab] = useState<'welcome' | 'live-demo' | 'color' | 'nav' | 'structure' | 'cms'>('welcome');
-  const [selectedThemeId, setSelectedThemeId] = useState<string>('classic-scholar');
+  const [selectedThemeId, setSelectedThemeId] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sman1losari_selected_theme_id') || 'classic-scholar';
+    }
+    return 'classic-scholar';
+  });
 
   // Security Modal States
   const [logoDownloadStatus, setLogoDownloadStatus] = useState<'idle' | 'success' | 'copied'>('idle');
@@ -518,7 +523,10 @@ export default function App() {
               {/* Renders color critique, recommended palettes switcher */}
               <ColorGuide 
                 currentThemeId={selectedThemeId}
-                onThemeSelect={(id) => setSelectedThemeId(id)}
+                onThemeSelect={(id) => {
+                  setSelectedThemeId(id);
+                  localStorage.setItem('sman1losari_selected_theme_id', id);
+                }}
               />
             </motion.div>
           )}
