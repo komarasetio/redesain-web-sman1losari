@@ -1515,32 +1515,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
               NPSN: 20214981 • {lang === 'id' ? 'Akreditasi A' : 'Accreditation A'}
             </div>
             <div className="pt-2">
-              <button
-                id="footer-download-logo-btn"
-                onClick={() => {
-                  const svgElement = document.getElementById('sman-1-losari-logo-svg');
-                  if (svgElement) {
-                    const serializer = new XMLSerializer();
-                    let svgString = serializer.serializeToString(svgElement);
-                    if (!svgString.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {
-                      svgString = svgString.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
-                    }
-                    const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = 'logo_sman1_losari_cirebon_resmi.svg';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
-                  }
-                }}
-                className="text-[11px] font-black text-amber-500 hover:text-amber-400 flex items-center gap-1.5 transition-colors uppercase bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 cursor-pointer shadow-sm mt-3"
-                title="Download Official SVG Logo Programmatically"
-              >
-                <Download className="w-3.5 h-3.5" /> {lang === 'id' ? 'Unduh Logo SVG Resmi' : 'Download SVG Logo'}
-              </button>
+              {/* Logo SVG download removed by request */}
             </div>
           </div>
 
@@ -1570,13 +1545,41 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
             </div>
           </div>
 
-          {/* Simulator Maps Placeholder to complete layout */}
+          {/* Modern Interactive Google Maps Component */}
           <div className="space-y-4">
             <h5 className="font-extrabold text-white text-xs tracking-wider uppercase">{lang === 'id' ? 'Lokasi Sekolah' : 'School Location'}</h5>
-            <div className="rounded-xl overflow-hidden border border-slate-800 h-28 bg-slate-900 flex items-center justify-center p-3 text-center text-slate-500 text-[10px]">
-              <div>
-                <span className="block font-bold mb-1 text-slate-400">{lang === 'id' ? 'Map Widget SMAN 1 Losari' : 'SMAN 1 Losari Map Widget'}</span>
-                <span className="block text-[9px]">{lang === 'id' ? 'Gmaps API Terpasang • Koordinat Cirebon Timur' : 'Gmaps API Active • East Cirebon Coordinates'}</span>
+            <div className="relative rounded-2xl overflow-hidden border border-slate-800 h-44 bg-slate-950 shadow-lg group transition-all duration-300 hover:border-slate-700">
+              {/* Map Iframe */}
+              <iframe
+                src="https://maps.google.com/maps?q=-6.8419,108.8076&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                width="100%"
+                height="100%"
+                style={{ border: 0, filter: 'contrast(1.1) brightness(0.9) grayscale(15%)' }}
+                allowFullScreen={false}
+                loading="lazy"
+                referrerPolicy="no-referrer"
+                title="SMAN 1 Losari Location Map"
+                className="w-full h-full opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+              ></iframe>
+
+              {/* Coordinates Float Tag Overlay */}
+              <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1 pointer-events-none">
+                <span className="bg-slate-950/80 backdrop-blur-md text-[9px] font-black tracking-wider text-amber-400 px-2.5 py-1 rounded-lg border border-white/5 uppercase shadow-md inline-block">
+                  📍 -6.8419, 108.8076
+                </span>
+              </div>
+              
+              {/* Bottom Actions Overlay */}
+              <div className="absolute bottom-2 right-2 z-10">
+                <a 
+                  href="https://maps.google.com/?q=-6.8419,108.8076" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-lg shadow-md transition-all flex items-center gap-1 border border-indigo-400/30"
+                >
+                  <span>Buka Maps</span>
+                  <ArrowUpRight className="w-3 h-3" />
+                </a>
               </div>
             </div>
           </div>
