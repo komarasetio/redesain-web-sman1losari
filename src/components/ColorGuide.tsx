@@ -71,6 +71,17 @@ export default function ColorGuide({ currentThemeId, onThemeSelect }: ColorGuide
       tagline: 'Presisi Tinggi, Kejujuran, & Kejelasan Berpikir',
     },
     {
+      id: 'pure-white',
+      name: 'Pure White (Putih Bersih - Kontras Adaptif)',
+      description: 'Desain premium dengan latar belakang putih murni di seluruh bagian halaman utama. Semua elemen visual, bar navigasi, widget, dan tulisan secara cerdas beradaptasi menjadi gelap (deep blue/charcoal) agar teks terlihat sangat jelas di layar gawai Anda.',
+      primaryHex: '#FFFFFF', // Pure White
+      secondaryHex: '#F8FAFC', // Slate 50
+      accentHex: '#1E3A8A', // Deep educational blue
+      bgHex: '#FFFFFF', // Pure White
+      textColor: 'text-slate-900',
+      tagline: 'Kejernihan Mutlak, Elegan, & Aksesibilitas Sempurna',
+    },
+    {
       id: 'iron-crimson',
       name: 'Iron Crimson (Baja & Crimson)',
       description: 'Paduan kokoh warna batu arang gelap (stone charcoal) dengan merah crimson baja yang mencerminkan keberanian murni dan tekad tak tergoyahkan.',

@@ -567,6 +567,23 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
           secondaryHex: '#27272A',
           accentHex: '#18181B'
         };
+      case 'pure-white':
+        return {
+          textPrimary: 'text-slate-900',
+          bgPrimary: 'bg-white',
+          bgPrimaryLight: 'bg-slate-50',
+          bgPrimaryHover: 'hover:bg-slate-100',
+          bgGradient: 'from-white to-slate-50',
+          textAccent: 'text-blue-800',
+          bgAccent: 'bg-blue-850',
+          bgAccentHover: 'hover:bg-blue-900',
+          borderAccent: 'border-blue-800',
+          accentTextBg: 'bg-blue-50 text-slate-800 border border-blue-200',
+          primaryHex: '#FFFFFF',
+          secondaryHex: '#F8FAFC',
+          accentHex: '#1E3A8A',
+          isWhiteBg: true
+        };
       case 'iron-crimson':
         return {
           textPrimary: 'text-stone-900',
@@ -631,26 +648,25 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
   const filteredGallery = galleryFilter === 'semua' 
     ? galleryItems 
     : galleryItems.filter(item => item.tag === galleryFilter);
-
   return (
-    <div className={`bg-slate-50 overflow-x-hidden relative ${isFullPage ? '' : 'rounded-2xl border border-slate-200 shadow-sm'}`} id="live-demo-parent">
+    <div className={`${c.isWhiteBg ? 'bg-white' : 'bg-slate-50'} overflow-x-hidden relative ${isFullPage ? '' : 'rounded-2xl border border-slate-200 shadow-sm'}`} id="live-demo-parent">
       
       {/* 1. INFORMATIONAL TOP-BAR */}
-      <div className="text-slate-200 py-2.5 px-4 md:px-8 flex flex-col md:flex-row md:items-center justify-between gap-2 text-[10px] md:text-xs relative z-45 border-b" style={{ backgroundColor: c.primaryHex, borderColor: `${c.accentHex}15` }} id="live-demo-top-bar">
+      <div className={`${c.isWhiteBg ? 'text-slate-700 bg-white border-slate-200' : 'text-slate-200'} py-2.5 px-4 md:px-8 flex flex-col md:flex-row md:items-center justify-between gap-2 text-[10px] md:text-xs relative z-45 border-b`} style={{ backgroundColor: c.isWhiteBg ? '#FFFFFF' : c.primaryHex, borderColor: c.isWhiteBg ? '#E2E8F0' : `${c.accentHex}15` }} id="live-demo-top-bar">
         <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-center md:text-left">
           <span className="flex items-center gap-2 justify-center">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-            <span className="font-semibold tracking-wide text-white">{t('spmbOpen')}</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+            <span className={`font-semibold tracking-wide ${c.isWhiteBg ? 'text-slate-800' : 'text-white'}`}>{t('spmbOpen')}</span>
           </span>
           <span className="hidden md:inline text-slate-500 opacity-40">|</span>
           <span className="hidden md:flex items-center gap-1"><Phone className="w-3.5 h-3.5" style={{ color: c.accentHex }} /> {t('phone')}: (0231) 831999</span>
         </div>
-        <div className="hidden sm:flex items-center justify-between md:justify-end gap-6 pt-2 md:pt-0 border-t md:border-t-0" style={{ borderColor: `${c.accentHex}15` }}>
+        <div className="hidden sm:flex items-center justify-between md:justify-end gap-6 pt-2 md:pt-0 border-t md:border-t-0" style={{ borderColor: c.isWhiteBg ? '#E2E8F0' : `${c.accentHex}15` }}>
           <span className="flex items-center gap-1.5 font-medium flex-nowrap"><Clock className="w-3.5 h-3.5" style={{ color: c.accentHex }} /> {timeStr}</span>
-          <div className="flex gap-4 font-bold text-slate-300">
-            <a href="#resources" className="hover:text-white transition-colors">{t('alumni')}</a>
-            <a href="#resources" className="hover:text-white transition-colors">{t('library')}</a>
-            <a href="#resources" className="hover:text-white transition-colors">{t('learning')}</a>
+          <div className={`flex gap-4 font-bold ${c.isWhiteBg ? 'text-slate-600' : 'text-slate-300'}`}>
+            <a href="#resources" className={`transition-colors ${c.isWhiteBg ? 'hover:text-blue-700 text-slate-650' : 'hover:text-white'}`}>{t('alumni')}</a>
+            <a href="#resources" className={`transition-colors ${c.isWhiteBg ? 'hover:text-blue-700 text-slate-650' : 'hover:text-white'}`}>{t('library')}</a>
+            <a href="#resources" className={`transition-colors ${c.isWhiteBg ? 'hover:text-blue-700 text-slate-650' : 'hover:text-white'}`}>{t('learning')}</a>
           </div>
         </div>
       </div>
@@ -658,19 +674,19 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
       <header className="sticky top-0 bg-white px-3 sm:px-6 md:px-8 py-4 sm:py-5 flex justify-between items-center shadow-md z-30 transition-all border-b border-slate-100" id="live-demo-header">
         {/* Brand section (Rotated square emblem as requested by design HTML) */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <Sman1LosariLogo size="sm" primaryColor={c.primaryHex} accentColor={c.accentHex} />
+          <Sman1LosariLogo size="sm" primaryColor={c.isWhiteBg ? '#1E3A8A' : c.primaryHex} accentColor={c.accentHex} />
           <div>
-            <h1 className="text-xs sm:text-sm md:text-base font-black leading-none uppercase tracking-tight" style={{ color: c.primaryHex }}>SMAN 1 LOSARI</h1>
+            <h1 className="text-xs sm:text-sm md:text-base font-black leading-none uppercase tracking-tight" style={{ color: c.isWhiteBg ? '#1E3A8A' : c.primaryHex }}>SMAN 1 LOSARI</h1>
             <p className="font-script text-sm sm:text-base italic font-bold tracking-wide -mt-0.5 leading-none" style={{ color: c.accentHex }}>Pasti Bisa!</p>
           </div>
         </div>
 
         {/* Navigation Core (Desktop UI - High polish states) */}
         <nav className="hidden lg:flex gap-6 text-xs font-semibold text-slate-600">
-          <a href="#" className="pb-1 font-bold border-b-2" style={{ color: c.primaryHex, borderBottomColor: c.accentHex }}>{t('home')}</a>
+          <a href="#" className="pb-1 font-bold border-b-2" style={{ color: c.isWhiteBg ? '#1E3A8A' : c.primaryHex, borderBottomColor: c.accentHex }}>{t('home')}</a>
           
           <div className="relative group pb-1">
-            <button className="flex items-center gap-1 hover:opacity-85 transition-colors cursor-pointer font-bold" style={{ color: c.primaryHex }}>
+            <button className="flex items-center gap-1 hover:opacity-85 transition-colors cursor-pointer font-bold" style={{ color: c.isWhiteBg ? '#1E3A8A' : c.primaryHex }}>
               {t('profile')} <ChevronDown className="w-3 h-3 text-slate-400 group-hover:text-slate-900" />
             </button>
             <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-slate-150 shadow-xl rounded-xl p-3 space-y-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
@@ -691,11 +707,11 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
             </div>
           </div>
 
-          <a href="#resources" className="transition-colors font-bold" style={{ color: `${c.primaryHex}dd` }}>{t('academicLink')}</a>
-          <a href="#resources" className="transition-colors font-bold" style={{ color: `${c.primaryHex}dd` }}>{t('kesiswaan')}</a>
-          <a href="#resources" className="transition-colors font-bold" style={{ color: `${c.primaryHex}dd` }}>{t('facilities')}</a>
+          <a href="#resources" className="transition-colors font-bold" style={{ color: c.isWhiteBg ? '#1E3A8A' : `${c.primaryHex}dd` }}>{t('academicLink')}</a>
+          <a href="#resources" className="transition-colors font-bold" style={{ color: c.isWhiteBg ? '#1E3A8A' : `${c.primaryHex}dd` }}>{t('kesiswaan')}</a>
+          <a href="#resources" className="transition-colors font-bold" style={{ color: c.isWhiteBg ? '#1E3A8A' : `${c.primaryHex}dd` }}>{t('facilities')}</a>
           {showTeachers && (
-            <a href="#guru" className="transition-colors font-bold" style={{ color: `${c.primaryHex}dd` }}>{t('contact')}</a>
+            <a href="#guru" className="transition-colors font-bold" style={{ color: c.isWhiteBg ? '#1E3A8A' : `${c.primaryHex}dd` }}>{t('contact')}</a>
           )}
         </nav>
 
@@ -717,7 +733,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
               <div className="absolute right-0 mt-1.5 w-32 bg-white border border-slate-150 shadow-2xl rounded-xl p-1 z-50 flex flex-col gap-0.5">
                 <button 
                   onClick={() => handleLangChange('id')}
-                  className={`w-full text-left px-2.5 py-1.5 text-xs font-bold rounded-lg transition-colors flex items-center gap-2 ${lang === 'id' ? 'bg-slate-100 text-slate-900 border-l-4 border-amber-500' : 'text-slate-600 hover:bg-slate-50'}`}
+                  className={`w-full text-left px-2.5 py-1.5 text-xs font-bold rounded-lg transition-colors flex items-center gap-2 ${lang === 'id' ? 'bg-slate-100 text-slate-900 border-l-4 border-amber-500' : 'text-slate-650 hover:bg-slate-50'}`}
                 >
                   <span>🇮🇩</span> Indo (ID)
                 </button>
@@ -746,7 +762,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
             target="_blank"
             rel="noopener noreferrer"
             className="text-white px-3 sm:px-6 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-xs font-extrabold shadow-lg tracking-wider uppercase cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center whitespace-nowrap"
-            style={{ backgroundColor: c.primaryHex }}
+            style={{ backgroundColor: c.isWhiteBg ? c.accentHex : c.primaryHex }}
           >
             {t('portalSpmb')}
           </a>
@@ -825,9 +841,9 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
       </AnimatePresence>
 
       {/* 3. HERO/WELCOME BANNER WITH MODERN ASYMMETRICAL STATS */}
-      <section className="relative text-slate-100 py-16 md:py-24 px-4 md:px-8 overflow-hidden" style={{ backgroundColor: c.primaryHex }} id="hero-section">
+      <section className={`relative py-16 md:py-24 px-4 md:px-8 overflow-hidden ${c.isWhiteBg ? 'bg-white text-slate-800 border-b border-slate-105' : 'text-slate-100'}`} style={{ backgroundColor: c.isWhiteBg ? '#FFFFFF' : c.primaryHex }} id="hero-section">
         {/* Background Overlay & Geometric Grid from Professional Polish */}
-        <div className="absolute inset-0 bg-gradient-to-r opacity-95 z-10" style={{ backgroundImage: `linear-gradient(to right, ${c.primaryHex}FA, ${c.secondaryHex}CA)` }}></div>
+        <div className="absolute inset-0 bg-gradient-to-r opacity-95 z-10" style={{ backgroundImage: `linear-gradient(to right, ${c.isWhiteBg ? '#FFFFFF' : c.primaryHex}FA, ${c.isWhiteBg ? '#F8FAFC' : c.secondaryHex}CA)` }}></div>
         <div className="absolute inset-0 flex items-center justify-center opacity-[0.05] pointer-events-none">
           <div className="grid grid-cols-6 grid-rows-4 w-full h-full gap-1">
             {Array.from({ length: 24 }).map((_, i) => (
@@ -846,11 +862,11 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
             <span className="font-bold tracking-[0.2em] text-[10px] uppercase mb-4 block animate-pulse" style={{ color: c.accentHex }}>
               {t('qualityEducation')}
             </span>
-            <h2 className="text-3xl md:text-5xl font-black text-white leading-tight">
+            <h2 className={`text-3xl md:text-5xl font-black leading-tight ${c.isWhiteBg ? 'text-slate-900' : 'text-white'}`}>
               {t('heroTitle1')} <br/>
-              <span style={{ color: c.accentHex }}>{t('heroTitle2')}</span>
+              <span style={{ color: c.isWhiteBg ? '#1E3A8A' : c.accentHex }}>{t('heroTitle2')}</span>
             </h2>
-            <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-xl">
+            <p className={`${c.isWhiteBg ? 'text-slate-600' : 'text-slate-300'} text-sm md:text-base leading-relaxed max-w-xl`}>
               {t('heroDesc')}
             </p>
             <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -858,8 +874,8 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                 href="https://spmb.jabarprov.go.id/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-slate-950 px-8 py-3 rounded-md font-bold text-xs hover:brightness-110 transition-all shadow-xl font-extrabold uppercase tracking-wider cursor-pointer inline-flex items-center justify-center"
-                style={{ backgroundColor: c.accentHex }}
+                className="px-8 py-3 rounded-md font-bold text-xs hover:brightness-110 transition-all shadow-xl font-extrabold uppercase tracking-wider cursor-pointer inline-flex items-center justify-center"
+                style={{ backgroundColor: c.accentHex, color: '#FFFFFF' }}
               >
                 {t('registerNow')}
               </a>
@@ -868,7 +884,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                   const el = document.getElementById('sambutan');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="border border-white/30 bg-white/10 backdrop-blur-sm text-white px-8 py-3 rounded-md font-bold text-xs hover:bg-white/20 transition-all uppercase tracking-wider cursor-pointer"
+                className={`border bg-white/10 backdrop-blur-sm px-8 py-3 rounded-md font-bold text-xs transition-all uppercase tracking-wider cursor-pointer ${c.isWhiteBg ? 'border-slate-300 text-slate-800 hover:bg-slate-50' : 'border-white/30 text-white hover:bg-white/20'}`}
               >
                 {t('virtualTour')}
               </button>
@@ -878,7 +894,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
           {/* Quick Stats Grid with Double Floating design and Photo Showcase (Right 5/12) */}
           <div className="lg:col-span-5 space-y-6">
             {/* Interactive Photo Frame for Activities */}
-            <div className="relative group overflow-hidden rounded-2xl min-h-[220px] md:min-h-[260px] shadow-2xl flex items-end border" style={{ backgroundColor: `${c.primaryHex}dd`, borderColor: `${c.accentHex}20` }}>
+            <div className="relative group overflow-hidden rounded-2xl min-h-[220px] md:min-h-[260px] shadow-2xl flex items-end border" style={{ backgroundColor: c.isWhiteBg ? '#F1F5F9' : `${c.primaryHex}dd`, borderColor: c.isWhiteBg ? '#CBD5E1' : `${c.accentHex}20` }}>
               <img 
                 src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=800&auto=format&fit=crop" 
                 alt="Kegiatan Pembelajaran SMAN 1 Losari" 
@@ -919,12 +935,12 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
       </section>
 
       {/* 4. RUNNING NEWS TICKER */}
-      <div className="py-3 border-y text-xs px-4 flex items-center gap-3 overflow-hidden relative z-10 font-medium" style={{ backgroundColor: `${c.accentHex}12`, borderColor: `${c.accentHex}20` }}>
-        <span className="shrink-0 flex items-center gap-1.5 font-extrabold uppercase tracking-wider text-[10px] sm:text-xs text-white px-2.5 py-1 rounded-md shadow-xs select-none z-20" style={{ backgroundColor: c.primaryHex }}>
-          <Bell className="w-3.5 h-3.5 animate-bounce" style={{ color: c.accentHex }} /> {t('runningNews')}
+      <div className="py-3 border-y text-xs px-4 flex items-center gap-3 overflow-hidden relative z-10 font-medium" style={{ backgroundColor: c.isWhiteBg ? '#F8FAFC' : `${c.accentHex}12`, borderColor: c.isWhiteBg ? '#E2E8F0' : `${c.accentHex}20` }}>
+        <span className="shrink-0 flex items-center gap-1.5 font-extrabold uppercase tracking-wider text-[10px] sm:text-xs text-white px-2.5 py-1 rounded-md shadow-xs select-none z-20" style={{ backgroundColor: c.isWhiteBg ? c.accentHex : c.primaryHex }}>
+          <Bell className="w-3.5 h-3.5 animate-bounce" style={{ color: c.isWhiteBg ? '#FFFFFF' : c.accentHex }} /> {t('runningNews')}
         </span>
         <div className="overflow-hidden flex-1 relative flex items-center py-0.5">
-          <div className="animate-marquee whitespace-nowrap flex gap-12" style={{ color: c.primaryHex }}>
+          <div className="animate-marquee whitespace-nowrap flex gap-12" style={{ color: c.isWhiteBg ? '#0F172A' : c.primaryHex }}>
             <span>{t('newsTicker1')}</span>
             <span>{t('newsTicker2')}</span>
             <span>{t('newsTicker3')}</span>
@@ -946,11 +962,11 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
           {/* Main Huge Card: Visi-Misi (6/12) */}
           <div 
             onClick={() => setShowVisiMisi(true)}
-            className="lg:col-span-6 rounded-3xl overflow-hidden shadow-lg relative group cursor-pointer border flex flex-col justify-end min-h-[380px] p-8 text-white transition-all duration-500 hover:shadow-xl hover:translate-y-[-4px]"
+            className={`lg:col-span-6 rounded-3xl overflow-hidden shadow-lg relative group cursor-pointer border flex flex-col justify-end min-h-[380px] p-8 transition-all duration-500 hover:shadow-xl hover:translate-y-[-4px] ${c.isWhiteBg ? 'text-slate-850' : 'text-white'}`}
             style={{ 
-              backgroundColor: c.primaryHex, 
-              borderColor: `${c.accentHex}25`,
-              backgroundImage: `radial-gradient(ellipse at top right, ${c.accentHex}1D, transparent 55%), radial-gradient(circle at bottom left, ${c.primaryHex}D9, #090D16 100%)`
+              backgroundColor: c.isWhiteBg ? '#F8FAFC' : c.primaryHex, 
+              borderColor: c.isWhiteBg ? '#E2E8F0' : `${c.accentHex}25`,
+              backgroundImage: c.isWhiteBg ? 'none' : `radial-gradient(ellipse at top right, ${c.accentHex}1D, transparent 55%), radial-gradient(circle at bottom left, ${c.primaryHex}D9, #090D16 100%)`
             }}
           >
             {/* Modern Animated Ambient Glows & Patterns */}
@@ -958,22 +974,22 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
               {/* Blur light blobs */}
               <div 
                 className="absolute top-[-15%] right-[-5%] w-[250px] h-[250px] rounded-full blur-3xl opacity-20 animate-pulse duration-5000"
-                style={{ backgroundColor: c.accentHex }}
+                style={{ backgroundColor: c.isWhiteBg ? '#3B82F6' : c.accentHex }}
               />
               <div 
                 className="absolute bottom-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full blur-3xl opacity-30"
-                style={{ backgroundColor: c.primaryHex }}
+                style={{ backgroundColor: c.isWhiteBg ? '#EFF6FF' : c.primaryHex }}
               />
 
               {/* Decorative SVG Geometric Grid Web */}
               <svg className="absolute inset-0 w-full h-full opacity-10" width="100%" height="100%">
                 <defs>
                   <pattern id="grid-pattern-visi" width="24" height="24" patternUnits="userSpaceOnUse">
-                    <path d="M 24 0 L 0 0 0 24" fill="none" stroke="white" strokeWidth="0.5" />
+                    <path d="M 24 0 L 0 0 0 24" fill="none" stroke={c.isWhiteBg ? '#475569' : 'white'} strokeWidth="0.5" />
                   </pattern>
                   <linearGradient id="grid-gradient-visi" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="white" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="white" stopOpacity="0" />
+                    <stop offset="0%" stopColor={c.isWhiteBg ? '#334155' : 'white'} stopOpacity="0.25" />
+                    <stop offset="100%" stopColor={c.isWhiteBg ? '#475569' : 'white'} stopOpacity="0" />
                   </linearGradient>
                 </defs>
                 <rect width="100%" height="100%" fill="url(#grid-pattern-visi)" />
@@ -989,12 +1005,12 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                   alt="Visi SMAN 1 Losari" 
                   referrerPolicy="no-referrer"
                   onError={() => setVisiImgError(true)}
-                  className="absolute inset-0 w-full h-full object-cover opacity-25 group-hover:opacity-35 group-hover:scale-105 transition-all duration-700 mix-blend-overlay"
+                  className={`absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-700 mix-blend-overlay ${c.isWhiteBg ? 'opacity-[0.04]' : 'opacity-25 group-hover:opacity-35'}`}
                 />
               )}
 
               {/* Glassmorphic dark gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/40 to-transparent" />
+              {!c.isWhiteBg && <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/40 to-transparent" />}
             </div>
 
             {/* Glowing Icon Emblem: floating badge decoration */}
@@ -1002,9 +1018,9 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
               <div 
                 className="w-14 h-14 rounded-2xl flex items-center justify-center border transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-md backdrop-blur-md"
                 style={{ 
-                  backgroundColor: `${c.primaryHex}E6`, 
-                  borderColor: `${c.accentHex}40`,
-                  boxShadow: `0 8px 30px ${c.accentHex}15`
+                  backgroundColor: c.isWhiteBg ? '#FFFFFF' : `${c.primaryHex}E6`, 
+                  borderColor: c.isWhiteBg ? '#E2E8F0' : `${c.accentHex}40`,
+                  boxShadow: `0 8px 30px ${c.isWhiteBg ? '#0F172A10' : `${c.accentHex}15`}`
                 }}
               >
                 <Award 
@@ -1017,19 +1033,19 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
             {/* Content Overlays */}
             <div className="relative z-10 space-y-4">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-extrabold tracking-widest uppercase px-3 py-1 rounded-full inline-block text-slate-900 shadow-xs" style={{ backgroundColor: c.accentHex }}>
+                <span className="text-[10px] font-extrabold tracking-widest uppercase px-3 py-1 rounded-full inline-block shadow-xs" style={{ backgroundColor: c.accentHex, color: '#FFFFFF' }}>
                   💎 {t('characterMain')}
                 </span>
-                <span className="text-[10px] bg-white/10 hover:bg-white/15 text-white/90 font-extrabold px-3 py-1 rounded-full border border-white/10 backdrop-blur-xs select-none">
+                <span className={`text-[10px] font-extrabold px-3 py-1 rounded-full border select-none ${c.isWhiteBg ? 'bg-slate-200/50 text-slate-800 border-slate-300' : 'bg-white/10 text-white/90 border-white/10'}`}>
                   {lang === 'id' ? 'PILAR UTAMA' : 'MAIN PILLAR'}
                 </span>
               </div>
               
               <div className="space-y-1.5 align-bottom">
-                <h4 className="text-2xl md:text-3xl font-black tracking-tight leading-tight bg-gradient-to-r from-white via-white to-slate-200 bg-clip-text text-transparent">
+                <h4 className={`text-2xl md:text-3xl font-black tracking-tight leading-tight ${c.isWhiteBg ? 'text-slate-900 bg-none' : 'bg-gradient-to-r from-white via-white to-slate-200 bg-clip-text text-transparent'}`}>
                   {t('visimisi')}
                 </h4>
-                <p className="text-slate-200 text-xs font-medium leading-relaxed max-w-lg line-clamp-3 md:line-clamp-2">
+                <p className={`text-xs font-medium leading-relaxed max-w-lg line-clamp-3 md:line-clamp-2 ${c.isWhiteBg ? 'text-slate-650' : 'text-slate-200'}`}>
                   {t('visiExcerpt')}
                 </p>
               </div>
@@ -1084,7 +1100,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                       setSelectedNews(news);
                     }}
                     className="text-[11px] font-bold flex items-center gap-1 hover:brightness-110 transition-all cursor-pointer" 
-                    style={{ color: c.primaryHex }}
+                    style={{ color: c.isWhiteBg ? '#1E3A8A' : c.primaryHex }}
                   >
                     {t('readMore')} <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" style={{ color: c.accentHex }} />
                   </button>
@@ -1097,13 +1113,13 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
       </section>
 
       {/* 6. COMPACT EDITORIAL PANEL (Sambutan & List) */}
-      <section className="bg-white py-16 px-4 md:px-8 border-y border-slate-100" id="sambutan">
+      <section className={`py-16 px-4 md:px-8 border-y border-slate-100 ${c.isWhiteBg ? 'bg-white' : 'bg-white'}`} id="sambutan">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Left panel: Portrait & Speech layout (7/12) */}
           <div className="lg:col-span-7 flex flex-col md:flex-row gap-6 items-center">
             {/* Visual Frame wrapper */}
-            <div className="relative shrink-0 w-44 h-44 md:w-52 md:h-52 rounded-2xl overflow-hidden shadow-sm border-4 border-slate-100">
+            <div className={`relative shrink-0 w-44 h-44 md:w-52 md:h-52 rounded-2xl overflow-hidden shadow-sm border-4 ${c.isWhiteBg ? 'border-slate-105' : 'border-slate-100'}`}>
               <img 
                 src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=300" 
                 alt="Nining Mulyati, S.E.,M.Si. - Kepala Sekolah SMAN 1 Losari" 
@@ -1116,19 +1132,19 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
             </div>
 
             <div className="space-y-4 text-center md:text-left">
-              <span className="text-xs font-bold uppercase tracking-widest block" style={{ color: c.primaryHex }}>{t('quoteWelcoming')}</span>
+              <span className="text-xs font-bold uppercase tracking-widest block" style={{ color: c.isWhiteBg ? '#1E3A8A' : c.primaryHex }}>{t('quoteWelcoming')}</span>
               <h4 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">{t('principalName')}</h4>
               <p className="text-slate-600 text-xs leading-relaxed italic">
                 {t('quoteWelcomeDesc')}
               </p>
               <div className="flex items-center gap-3 justify-center md:justify-start">
-                <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded uppercase">NIP: 196803241995121002</span>
+                <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded uppercase font-mono">NIP: 196803241995121002</span>
               </div>
             </div>
           </div>
 
           {/* Right panel: Modernized editorial articles block (5/12) */}
-          <div className="lg:col-span-5 bg-slate-50 border border-slate-100 p-6 rounded-2xl space-y-4">
+          <div className={`lg:col-span-5 border p-6 rounded-2xl space-y-4 ${c.isWhiteBg ? 'bg-slate-50 border-slate-200' : 'bg-slate-50 border-slate-100'}`}>
             <h5 className="font-extrabold text-xs text-slate-800 tracking-wider uppercase flex items-center gap-2">
               <FileText className="w-4 h-4" style={{ color: c.accentHex }} /> {t('quoteWelcomingTitle')}
             </h5>
@@ -1143,9 +1159,9 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                   key={ed.id}
                   className="bg-white p-3.5 rounded-xl border border-slate-205 shadow-2xs hover:border-slate-300 hover:shadow-3xs transition-all flex justify-between items-center group cursor-pointer"
                 >
-                  <div className="space-y-1">
+                  <div className="space-y-1 text-left">
                     <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">{lang === 'id' ? 'Artikel Guru' : 'Teacher Article'} • {idx+1}</span>
-                    <h6 className="font-bold text-xs text-slate-800 leading-tight transition-colors group-hover:opacity-85" style={{ color: c.primaryHex }}>
+                    <h6 className="font-bold text-xs leading-tight transition-colors group-hover:opacity-85" style={{ color: c.isWhiteBg ? '#1E3A8A' : c.primaryHex }}>
                       {ed.title}
                     </h6>
                   </div>
@@ -1163,14 +1179,14 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
         
         {/* Header explaining this tabbed redesign solves the flat table structure of the old layout */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div className="space-y-2">
-            <span className="text-xs font-bold uppercase tracking-widest block" style={{ color: c.primaryHex }}>{t('resourceHubTitle')}</span>
+          <div className="space-y-2 text-left">
+            <span className="text-xs font-bold uppercase tracking-widest block" style={{ color: c.isWhiteBg ? '#1E3A8A' : c.primaryHex }}>{t('resourceHubTitle')}</span>
             <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">{t('resourceHubSub')}</h3>
             <p className="text-slate-500 text-xs">{t('resourceHubDesc')}</p>
           </div>
 
           {/* Interactive Switchers */}
-          <div className="flex flex-wrap gap-1.5 bg-slate-150 p-1 rounded-xl self-start">
+          <div className={`flex flex-wrap gap-1.5 p-1 rounded-xl self-start ${c.isWhiteBg ? 'bg-slate-100' : 'bg-slate-150'}`}>
             {[
               { id: 'berita', label: `🔔 ${t('announcementsT')}` },
               { id: 'blog', label: `📝 ${t('teacherBlogsT')}` },
@@ -1184,7 +1200,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                     ? 'shadow-xs text-white' 
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
-                style={activeTab === tab.id ? { backgroundColor: c.primaryHex } : {}}
+                style={activeTab === tab.id ? { backgroundColor: c.isWhiteBg ? c.accentHex : c.primaryHex } : {}}
               >
                 {tab.label}
               </button>
@@ -1193,7 +1209,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
         </div>
 
         {/* Dynamic content rendering inside switcher box with crisp animations */}
-        <div className="bg-white border border-slate-200/55 rounded-2xl p-6 min-h-[320px]">
+        <div className={`border rounded-2xl p-6 min-h-[320px] ${c.isWhiteBg ? 'bg-white border-slate-205' : 'bg-white border-slate-200/55'}`}>
           <AnimatePresence mode="wait">
             {activeTab === 'berita' && (
               <motion.div 
@@ -1289,16 +1305,16 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
 
       {/* 8. NEW INTERACTIVE AGENDA COMPONENT (Solves Empty blank space of old site) */}
       {showActivities && (
-        <section className="bg-slate-900 text-white py-16 px-4 md:px-8 relative overflow-hidden">
+        <section className={`py-16 px-4 md:px-8 relative overflow-hidden ${c.isWhiteBg ? 'bg-white text-slate-850 border-b border-slate-205' : 'bg-slate-900 text-white'}`}>
           {/* Soft layout designs */}
           <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl" />
           
           <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Calendar visual (Left 4/12) */}
-            <div className="lg:col-span-4 bg-slate-950/80 p-6 rounded-2xl border border-slate-800 space-y-4">
+            <div className={`lg:col-span-4 p-6 rounded-2xl border space-y-4 ${c.isWhiteBg ? 'bg-slate-50 border-slate-200' : 'bg-slate-950/80 border-slate-800'}`}>
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-amber-500 uppercase tracking-widest">{t('calendarTitle')}</span>
-                <span className="text-xs text-slate-400">{lang === 'id' ? 'Mei 25 & 26' : 'May 25 & 26'}</span>
+                <span className={`text-xs ${c.isWhiteBg ? 'text-slate-500' : 'text-slate-400'}`}>{lang === 'id' ? 'Mei 25 & 26' : 'May 25 & 26'}</span>
               </div>
               
               <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-slate-500">
@@ -1316,7 +1332,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                       className={`p-1.5 rounded-md font-bold transition-all ${
                         isSpecial 
                           ? 'bg-amber-500 text-slate-950 scale-105' 
-                          : 'text-slate-400 hover:bg-slate-800'
+                          : c.isWhiteBg ? 'text-slate-600 hover:bg-slate-200' : 'text-slate-400 hover:bg-slate-800'
                       }`}
                     >
                       {dayNum}
@@ -1325,7 +1341,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                 })}
               </div>
 
-              <div className="bg-slate-900 p-3 rounded-lg flex items-start gap-1.5 text-[10px] text-slate-450">
+              <div className={`p-3 rounded-lg flex items-start gap-1.5 text-[10px] ${c.isWhiteBg ? 'bg-slate-150 text-slate-600' : 'bg-slate-900 text-slate-450'}`}>
                 <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0 mt-1" />
                 <span>{t('orangeDot')}</span>
               </div>
@@ -1333,10 +1349,10 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
 
             {/* Core Content (Right 8/12) */}
             <div className="lg:col-span-8 space-y-6">
-              <div className="space-y-2">
+              <div className="space-y-2 text-left">
                 <span className="text-xs font-semibold text-amber-500 uppercase tracking-wider block">{t('agendaBrief')}</span>
                 <h4 className="text-2xl md:text-3xl font-extrabold tracking-tight">{t('agendaTitle')}</h4>
-                <p className="text-slate-400 text-xs">{t('agendaDesc')}</p>
+                <p className={`text-xs ${c.isWhiteBg ? 'text-slate-600' : 'text-slate-400'}`}>{t('agendaDesc')}</p>
               </div>
 
               <div className="space-y-4">
@@ -1346,17 +1362,17 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                 ].map((ag, idx) => (
                   <div 
                     key={idx} 
-                    className="bg-slate-950 p-4 rounded-xl border border-slate-800/80 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-amber-500/50 transition-colors"
+                    className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-amber-500/50 transition-colors ${c.isWhiteBg ? 'bg-white border-slate-205 hover:bg-slate-50 shadow-3xs' : 'bg-slate-950 border-slate-800/80'}`}
                   >
-                    <div className="space-y-1">
+                    <div className="space-y-1 text-left">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-black text-amber-500">{ag.date}</span>
-                        <span className="text-[9px] text-slate-550 font-mono">| {ag.time}</span>
+                        <span className="text-[9px] text-slate-500 font-mono">| {ag.time}</span>
                       </div>
-                      <h5 className="font-extrabold text-xs text-white leading-normal">{ag.title}</h5>
+                      <h5 className={`font-extrabold text-xs leading-normal ${c.isWhiteBg ? 'text-slate-900' : 'text-white'}`}>{ag.title}</h5>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-slate-400 bg-slate-900 px-2.5 py-1 rounded border border-slate-800 flex items-center gap-1">
+                      <span className={`text-[10px] px-2.5 py-1 rounded border flex items-center gap-1 ${c.isWhiteBg ? 'bg-slate-50 border-slate-200 text-slate-700 font-semibold' : 'bg-slate-900 border-slate-800 text-slate-400'}`}>
                         <MapPin className="w-3 h-3 text-amber-500" /> {ag.loc}
                       </span>
                     </div>
@@ -1365,10 +1381,10 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
               </div>
 
               {/* Quick Poll / Interaction to solve stiffness */}
-              <div className="bg-slate-950/40 p-5 rounded-xl border border-slate-805 space-y-3">
-                <h5 className="font-bold text-xs text-slate-205">📊 {t('pollAspirasi')}</h5>
+              <div className={`p-5 rounded-xl border space-y-3 ${c.isWhiteBg ? 'bg-slate-50 border-slate-200 shadow-sm' : 'bg-slate-950/40 border-slate-805'}`}>
+                <h5 className={`font-bold text-xs text-left ${c.isWhiteBg ? 'text-slate-800' : 'text-slate-205'}`}>📊 {t('pollAspirasi')}</h5>
                 {userVote ? (
-                  <p className="text-xs text-emerald-400 font-bold">{t('pollVoteThanks')} (65% {t('pollAgreed')})</p>
+                  <p className="text-xs text-left text-emerald-400 font-bold">{t('pollVoteThanks')} (65% {t('pollAgreed')})</p>
                 ) : (
                   <div className="flex flex-wrap gap-2 pt-1">
                     {[
@@ -1379,7 +1395,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                       <button 
                         key={opt.id}
                         onClick={() => handleVote(opt.id)}
-                        className="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[10px] font-bold px-3 py-1.5 rounded-lg text-slate-350 transition-colors cursor-pointer"
+                        className={`border text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${c.isWhiteBg ? 'bg-white border-slate-300 text-slate-700 hover:bg-slate-100 shadow-3xs' : 'bg-slate-900 border-slate-800 text-slate-350 hover:bg-slate-800'}`}
                       >
                         👍 {opt.label}
                       </button>
@@ -1464,10 +1480,17 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
 
       {/* 10. MOTIVATION QUOTES SLIDER (Solves flat quote indicator text of old site) */}
       {showQuotes && (
-        <section className="py-12 text-slate-100 text-center relative z-10 overflow-hidden" style={{ backgroundColor: c.primaryHex }}>
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
-          <div className="max-w-2xl mx-auto px-4 space-y-4">
-            <span className="text-[10px] font-bold tracking-widest text-amber-500 uppercase block">{lang === 'id' ? 'KUTIPAN INSPIRATIF MINGGU INI' : 'INSPIRATIONAL QUOTE OF THE WEEK'}</span>
+        <section 
+          className="py-12 text-center relative z-10 overflow-hidden" 
+          style={{ 
+            backgroundColor: c.isWhiteBg ? '#F8FAFC' : c.primaryHex,
+            borderTop: c.isWhiteBg ? '1px solid #E2E8F0' : 'none',
+            borderBottom: c.isWhiteBg ? '1px solid #E2E8F0' : 'none'
+          }}
+        >
+          {c.isWhiteBg ? null : <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl" />}
+          <div className={`max-w-2xl mx-auto px-4 space-y-4 ${c.isWhiteBg ? 'text-slate-800' : 'text-slate-100'}`}>
+            <span className="text-[10px] font-black tracking-widest text-amber-500 uppercase block">{lang === 'id' ? 'KUTIPAN INSPIRATIF MINGGU INI' : 'INSPIRATIONAL QUOTE OF THE WEEK'}</span>
             
             <div className="min-h-[60px] flex items-center justify-center">
               <p className="text-sm md:text-base font-medium tracking-wide italic leading-relaxed">
@@ -1481,13 +1504,13 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
                   key={idx}
                   onClick={() => setActiveQuoteIndex(idx)}
                   className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${
-                    activeQuoteIndex === idx ? 'bg-amber-500 w-6' : 'bg-white/20 hover:bg-white/40'
+                    activeQuoteIndex === idx ? 'bg-amber-500 w-6' : (c.isWhiteBg ? 'bg-slate-300 hover:bg-slate-400' : 'bg-white/20 hover:bg-white/40')
                   }`}
                 />
               ))}
             </div>
 
-            <span className="text-[10px] font-bold text-slate-400 block">— {staticQuotes[activeQuoteIndex].author}</span>
+            <span className={`text-[10px] font-bold block ${c.isWhiteBg ? 'text-slate-500' : 'text-slate-405'}`}>— {staticQuotes[activeQuoteIndex].author}</span>
           </div>
         </section>
       )}
