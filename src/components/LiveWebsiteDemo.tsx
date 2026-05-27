@@ -520,6 +520,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
           borderAccent: 'border-amber-500',
           accentTextBg: 'bg-amber-100 text-amber-800',
           primaryHex: '#0F766E',
+          secondaryHex: '#115E59',
           accentHex: '#F59E0B'
         };
       case 'heritage-indigo':
@@ -535,7 +536,40 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
           borderAccent: 'border-orange-500',
           accentTextBg: 'bg-orange-100 text-orange-800',
           primaryHex: '#312E81',
+          secondaryHex: '#1E1B4B',
           accentHex: '#F97316'
+        };
+      case 'monochrome-absolute':
+        return {
+          textPrimary: 'text-zinc-950',
+          bgPrimary: 'bg-zinc-950',
+          bgPrimaryLight: 'bg-zinc-100',
+          bgPrimaryHover: 'hover:bg-zinc-900',
+          bgGradient: 'from-zinc-900 to-black',
+          textAccent: 'text-zinc-905',
+          bgAccent: 'bg-zinc-900',
+          bgAccentHover: 'hover:bg-black',
+          borderAccent: 'border-zinc-950',
+          accentTextBg: 'bg-zinc-100 text-zinc-900 border border-zinc-200',
+          primaryHex: '#09090B',
+          secondaryHex: '#27272A',
+          accentHex: '#18181B'
+        };
+      case 'iron-crimson':
+        return {
+          textPrimary: 'text-stone-900',
+          bgPrimary: 'bg-stone-900',
+          bgPrimaryLight: 'bg-stone-100',
+          bgPrimaryHover: 'hover:bg-stone-950',
+          bgGradient: 'from-stone-900 to-stone-950',
+          textAccent: 'text-red-700',
+          bgAccent: 'bg-red-700',
+          bgAccentHover: 'hover:bg-red-800',
+          borderAccent: 'border-red-750',
+          accentTextBg: 'bg-red-100 text-red-950',
+          primaryHex: '#1C1917',
+          secondaryHex: '#44403C',
+          accentHex: '#991B1B'
         };
       case 'classic-scholar':
       default:
@@ -551,6 +585,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
           borderAccent: 'border-amber-500',
           accentTextBg: 'bg-amber-100 text-amber-800',
           primaryHex: '#0F172A',
+          secondaryHex: '#1E3A8A',
           accentHex: '#F59E0B'
         };
     }
@@ -780,7 +815,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
       {/* 3. HERO/WELCOME BANNER WITH MODERN ASYMMETRICAL STATS */}
       <section className="relative text-slate-100 py-16 md:py-24 px-4 md:px-8 overflow-hidden" style={{ backgroundColor: c.primaryHex }} id="hero-section">
         {/* Background Overlay & Geometric Grid from Professional Polish */}
-        <div className="absolute inset-0 bg-gradient-to-r opacity-95 z-10" style={{ backgroundImage: `linear-gradient(to right, ${c.primaryHex}FA, ${themeId === 'academic-teal' ? '#115E59' : themeId === 'heritage-indigo' ? '#1E1B4B' : '#0F172A'}CA)` }}></div>
+        <div className="absolute inset-0 bg-gradient-to-r opacity-95 z-10" style={{ backgroundImage: `linear-gradient(to right, ${c.primaryHex}FA, ${c.secondaryHex}CA)` }}></div>
         <div className="absolute inset-0 flex items-center justify-center opacity-[0.05] pointer-events-none">
           <div className="grid grid-cols-6 grid-rows-4 w-full h-full gap-1">
             {Array.from({ length: 24 }).map((_, i) => (

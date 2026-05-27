@@ -58,6 +58,28 @@ export default function ColorGuide({ currentThemeId, onThemeSelect }: ColorGuide
       bgHex: '#FAF5FF', // Purple 50
       textColor: 'text-indigo-950',
       tagline: 'Kreativitas, Inovasi, & Komunitas Aktif',
+    },
+    {
+      id: 'monochrome-absolute',
+      name: 'Monochrome Absolute (Hitam Putih)',
+      description: 'Aura minimalis klasik berkelaraskan hitam malam absolut, abu grafit, dan latar putih bersih. Sangat kokoh, bersih, dan berwibawa.',
+      primaryHex: '#09090B', // Zinc 950
+      secondaryHex: '#27272A', // Zinc 800
+      accentHex: '#18181B', // Zinc 900
+      bgHex: '#FFFFFF', // Pure White
+      textColor: 'text-zinc-950',
+      tagline: 'Presisi Tinggi, Kejujuran, & Kejelasan Berpikir',
+    },
+    {
+      id: 'iron-crimson',
+      name: 'Iron Crimson (Baja & Crimson)',
+      description: 'Paduan kokoh warna batu arang gelap (stone charcoal) dengan merah crimson baja yang mencerminkan keberanian murni dan tekad tak tergoyahkan.',
+      primaryHex: '#1C1917', // Stone 900
+      secondaryHex: '#44403C', // Stone 700
+      accentHex: '#991B1B', // Red 800 (Crimson)
+      bgHex: '#FAF9F6', // Alabaster Off-white
+      textColor: 'text-stone-900',
+      tagline: 'Ketangguhan, Kehormatan, & Ketetapan Hati',
     }
   ];
 
