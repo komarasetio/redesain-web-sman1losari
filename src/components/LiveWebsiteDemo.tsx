@@ -152,7 +152,13 @@ const translations = {
     tabResourceDesc: "Informasi terpilah rapi, mengurangi beban tinggi halaman website.",
     downloadPdf: "Unduh Berkas PDF",
     catatGuru: "Catatan Guru",
-    madingAktivitas: "Dokumentasi Aktivitas Siswa"
+    madingAktivitas: "Dokumentasi Aktivitas Siswa",
+    resourceHubTitle: "INFORMASI PORTAL PINTAR",
+    resourceHubSub: "Pusat Informasi & Layanan Digital",
+    resourceHubDesc: "Akses cepat pengumuman ujian, berkas penting, blog guru, dan sarana prasarana sekolah.",
+    announcementsT: "Pengumuman & Agenda",
+    teacherBlogsT: "Blog & Opini Guru",
+    facilitiesT: "Fasilitas Unggulan"
   },
   en: {
     spmbOpen: "SPMB SMAN 1 Losari Admission FY 2026/2027 is Now Officially Open!",
@@ -265,7 +271,13 @@ const translations = {
     tabResourceDesc: "Optimized, well-structured resources preventing page bloat.",
     downloadPdf: "Download PDF File",
     catatGuru: "Teacher Note",
-    madingAktivitas: "Student Activity Documentation"
+    madingAktivitas: "Student Activity Documentation",
+    resourceHubTitle: "SMART DIGITAL INFORMATION HUB",
+    resourceHubSub: "Digital Information & Academic Services Hub",
+    resourceHubDesc: "Quick access to exam schedules, document downloads, teacher blogs, and school facilities.",
+    announcementsT: "Announcements & Schedules",
+    teacherBlogsT: "Teacher Notes & Blogs",
+    facilitiesT: "Featured Facilities"
   }
 };
 
