@@ -841,7 +841,7 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
       </AnimatePresence>
 
       {/* 3. HERO/WELCOME BANNER WITH MODERN ASYMMETRICAL STATS */}
-      <section className={`relative py-16 md:py-24 px-4 md:px-8 overflow-hidden ${c.isWhiteBg ? 'bg-white text-slate-800 border-b border-slate-105' : 'text-slate-100'}`} style={{ backgroundColor: c.isWhiteBg ? '#FFFFFF' : c.primaryHex }} id="hero-section">
+      <section className={`relative py-16 md:py-24 px-4 md:px-8 overflow-hidden ${c.isWhiteBg ? 'bg-white text-slate-800 border-b border-slate-200' : 'text-slate-100'}`} style={{ backgroundColor: c.isWhiteBg ? '#FFFFFF' : c.primaryHex }} id="hero-section">
         {/* Background Overlay & Geometric Grid from Professional Polish */}
         <div className="absolute inset-0 bg-gradient-to-r opacity-95 z-10" style={{ backgroundImage: `linear-gradient(to right, ${c.isWhiteBg ? '#FFFFFF' : c.primaryHex}FA, ${c.isWhiteBg ? '#F8FAFC' : c.secondaryHex}CA)` }}></div>
         <div className="absolute inset-0 flex items-center justify-center opacity-[0.05] pointer-events-none">
@@ -1118,15 +1118,21 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
           
           {/* Left panel: Portrait & Speech layout (7/12) */}
           <div className="lg:col-span-7 flex flex-col md:flex-row gap-6 items-center">
-            {/* Visual Frame wrapper */}
-            <div className={`relative shrink-0 w-44 h-44 md:w-52 md:h-52 rounded-2xl overflow-hidden shadow-sm border-4 ${c.isWhiteBg ? 'border-slate-105' : 'border-slate-100'}`}>
+            {/* Visual Frame wrapper - Reduced thickness of dynamic frame border */}
+            <div className={`relative shrink-0 w-44 h-44 md:w-52 md:h-52 rounded-2xl overflow-hidden shadow-sm border-2 ${c.isWhiteBg ? 'border-slate-200' : 'border-slate-200/50'}`}>
               <img 
                 src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=300" 
                 alt="Nining Mulyati, S.E.,M.Si. - Kepala Sekolah SMAN 1 Losari" 
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
               />
-              <div className={`absolute bottom-0 inset-x-0 p-2 text-center text-xs font-bold text-slate-900`} style={{ backgroundColor: c.accentHex }}>
+              <div 
+                className="absolute bottom-0 inset-x-0 p-2 text-center text-xs font-bold" 
+                style={{ 
+                  backgroundColor: c.accentHex, 
+                  color: (c.accentHex === '#1E3A8A' || c.accentHex === '#18181B' || c.accentHex === '#991B1B') ? '#FFFFFF' : '#0F172A' 
+                }}
+              >
                 {lang === 'id' ? 'Kepala Sekolah' : 'School Principal'}
               </div>
             </div>

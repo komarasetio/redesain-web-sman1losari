@@ -38,6 +38,16 @@ export default function CmsDashboard() {
     return localStorage.getItem('sman1losari_custom_logo');
   });
 
+  React.useEffect(() => {
+    const handleCheck = () => {
+      setCustomLogo(localStorage.getItem('sman1losari_custom_logo'));
+    };
+    window.addEventListener('sman1losari_logo_changed', handleCheck);
+    return () => {
+      window.removeEventListener('sman1losari_logo_changed', handleCheck);
+    };
+  }, []);
+
   // Section Visibility/Layout States
   const [showQuotes, setShowQuotes] = useState<boolean>(() => {
     if (typeof window === 'undefined') return true;
@@ -60,11 +70,18 @@ export default function CmsDashboard() {
     return localStorage.getItem('sman1losari_show_gallery') !== 'false';
   });
 
+  const triggerSync = () => {
+    import('../lib/apiSync')
+      .then(m => m.pushLocalConfigToServer())
+      .catch(err => console.error('Gagal memicu push sync:', err));
+  };
+
   const toggleSetting = (key: string, currentValue: boolean, setter: React.Dispatch<React.SetStateAction<boolean>>) => {
     const nextValue = !currentValue;
     setter(nextValue);
     localStorage.setItem(key, String(nextValue));
     window.dispatchEvent(new Event('sman1losari_layout_changed'));
+    triggerSync();
   };
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,6 +97,7 @@ export default function CmsDashboard() {
       localStorage.setItem('sman1losari_custom_logo', base64);
       setCustomLogo(base64);
       window.dispatchEvent(new Event('sman1losari_logo_changed'));
+      triggerSync();
     };
     reader.readAsDataURL(file);
   };
@@ -89,6 +107,7 @@ export default function CmsDashboard() {
     localStorage.setItem('sman1losari_custom_logo', url);
     setCustomLogo(url);
     window.dispatchEvent(new Event('sman1losari_logo_changed'));
+    triggerSync();
   };
 
   const handleLogoDelete = () => {
@@ -96,6 +115,7 @@ export default function CmsDashboard() {
       localStorage.removeItem('sman1losari_custom_logo');
       setCustomLogo(null);
       window.dispatchEvent(new Event('sman1losari_logo_changed'));
+      triggerSync();
     }
   };
   
@@ -283,6 +303,7 @@ export default function CmsDashboard() {
     e.preventDefault();
     if (username.trim().toLowerCase() === 'admin' && password === 'admin123') {
       localStorage.setItem('sman1losari_admin_logged', 'true');
+      localStorage.setItem('sman1losari_admin_token', 'admin123_authenticated');
       setIsAuthenticated(true);
       setLoginError('');
       setUsername('');
@@ -295,7 +316,9 @@ export default function CmsDashboard() {
   const handleLogout = () => {
     if (confirm('Apakah Anda yakin ingin keluar dari Sesi Pengelolaan Admin?')) {
       localStorage.removeItem('sman1losari_admin_logged');
+      localStorage.removeItem('sman1losari_admin_token');
       setIsAuthenticated(false);
+      window.location.reload();
     }
   };
 

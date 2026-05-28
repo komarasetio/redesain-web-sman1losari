@@ -1,38 +1,13 @@
-import { useState, useEffect } from 'react';
-import { NewsItem, TeacherItem, FacilityItem, ActivityItem } from '../types';
+import express from 'express';
+import path from 'path';
+import fs from 'fs';
+import { createServer as createViteServer } from 'vite';
 
-export interface AnnouncementItem {
-  id: string;
-  title: string;
-  date: string;
-  type: string;
-}
+const PORT = 3000;
+const SiteConfigPath = path.join(process.cwd(), 'site-config.json');
 
-export interface BlogItem {
-  id: string;
-  title: string;
-  author: string;
-  date: string;
-}
-
-export interface GalleryItem {
-  id: string;
-  title: string;
-  tag: 'akademik' | 'eskul' | 'fasilitas';
-  img: string;
-}
-
-export interface SchoolData {
-  news: NewsItem[];
-  announcements: AnnouncementItem[];
-  blogs: BlogItem[];
-  facilities: FacilityItem[];
-  activities: ActivityItem[];
-  teachers: TeacherItem[];
-  gallery: GalleryItem[];
-}
-
-const INITIAL_DATA: SchoolData = {
+// Default initial data to bootstrap site-config.json if not present
+const DEFAULT_SCHOOL_DATA = {
   news: [
     {
       id: 'news-1',
@@ -106,102 +81,93 @@ const INITIAL_DATA: SchoolData = {
   ]
 };
 
-const STORAGE_KEY = 'sman1losari_school_data';
+const DEFAULT_SITE_CONFIG = {
+  schoolData: DEFAULT_SCHOOL_DATA,
+  themeId: 'classic-scholar',
+  customLogo: null,
+  showQuotes: true,
+  showTeachers: true,
+  showMaps: true,
+  showActivities: true,
+  showGallery: true
+};
 
-// Custom listener system so multiple components synchronized in real-time
-const listeners: Set<() => void> = new Set();
-
-export function getStoredSchoolData(): SchoolData {
-  if (typeof window === 'undefined') return INITIAL_DATA;
+// Ensure our database file exists with the default data
+function getSiteConfig() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_DATA));
-      return INITIAL_DATA;
+    if (fs.existsSync(SiteConfigPath)) {
+      const data = fs.readFileSync(SiteConfigPath, 'utf-8');
+      return JSON.parse(data);
     }
-    return JSON.parse(raw);
-  } catch (error) {
-    console.error('Error reading localStorage data:', error);
-    return INITIAL_DATA;
+  } catch (err) {
+    console.error('Error reading site config:', err);
   }
-}
-
-export function saveStoredSchoolData(data: SchoolData) {
-  if (typeof window === 'undefined') return;
+  // Initialize with defaults if missing
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    // Trigger custom listeners
-    listeners.forEach(listener => listener());
-
-    // Auto sync ke server jika masuk sebagai admin
-    if (localStorage.getItem('sman1losari_admin_logged') === 'true') {
-      import('./apiSync')
-        .then(m => m.pushLocalConfigToServer())
-        .catch(err => console.error('Gagal memproses sync:', err));
-    }
-  } catch (error) {
-    console.error('Error saving localStorage data:', error);
+    fs.writeFileSync(SiteConfigPath, JSON.stringify(DEFAULT_SITE_CONFIG, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Error creating default site config:', err);
   }
+  return DEFAULT_SITE_CONFIG;
 }
 
-export function resetStoredSchoolData(): SchoolData {
-  saveStoredSchoolData(INITIAL_DATA);
-  return INITIAL_DATA;
-}
+async function startServer() {
+  const app = express();
+  
+  // Body parsing with comfortable limits for custom base64 logos
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-export function useSchoolData() {
-  const [data, setData] = useState<SchoolData>(() => getStoredSchoolData());
-
-  useEffect(() => {
-    const handleChange = () => {
-      setData(getStoredSchoolData());
-    };
-    
-    listeners.add(handleChange);
-    return () => {
-      listeners.delete(handleChange);
-    };
-  }, []);
-
-  const updateSection = <K extends keyof SchoolData>(key: K, list: SchoolData[K]) => {
-    const current = getStoredSchoolData();
-    current[key] = list;
-    saveStoredSchoolData(current);
-  };
-
-  const addItem = <K extends keyof SchoolData>(key: K, item: SchoolData[K][number]) => {
-    const current = getStoredSchoolData();
-    // Ensure item has ID, if not generated
-    if (!item.id) {
-      item.id = `${key}-${Date.now()}`;
+  // API Route - Get Site Configuration
+  app.get('/api/site-config', (req, res) => {
+    try {
+      const config = getSiteConfig();
+      res.json(config);
+    } catch (error: any) {
+      res.status(500).json({ error: 'Gagal memuat konfigurasi dari database.' });
     }
-    current[key] = [...current[key], item] as any;
-    saveStoredSchoolData(current);
-  };
+  });
 
-  const editItem = <K extends keyof SchoolData>(key: K, id: string, updatedFields: Partial<SchoolData[K][number]>) => {
-    const current = getStoredSchoolData();
-    current[key] = current[key].map((item: any) => {
-      if (item.id === id) {
-        return { ...item, ...updatedFields };
+  // API Route - Save Site Configuration (Admin Only)
+  app.post('/api/site-config', (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || authHeader !== 'Bearer admin123_authenticated') {
+        return res.status(401).json({ error: 'Akses Ditolak: Hanya Admin yang dapat memodifikasi website ini.' });
       }
-      return item;
-    }) as any;
-    saveStoredSchoolData(current);
-  };
 
-  const deleteItem = <K extends keyof SchoolData>(key: K, id: string) => {
-    const current = getStoredSchoolData();
-    current[key] = current[key].filter((item: any) => item.id !== id) as any;
-    saveStoredSchoolData(current);
-  };
+      const activeConfig = req.body;
+      if (!activeConfig || !activeConfig.schoolData) {
+        return res.status(400).json({ error: 'Struktur konfigurasi tidak valid.' });
+      }
 
-  return {
-    data,
-    updateSection,
-    addItem,
-    editItem,
-    deleteItem,
-    resetToDefault: resetStoredSchoolData
-  };
+      fs.writeFileSync(SiteConfigPath, JSON.stringify(activeConfig, null, 2), 'utf-8');
+      res.json({ success: true, siteConfig: activeConfig });
+    } catch (error: any) {
+      console.error('Save config error:', error);
+      res.status(500).json({ error: 'Gagal mengamankan kustomisasi ke database.' });
+    }
+  });
+
+  // Vite Integration in Development
+  if (process.env.NODE_ENV !== 'production') {
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: 'spa'
+    });
+    app.use(vite.middlewares);
+  } else {
+    // Serve static compiled assets in production
+    const distPath = path.join(process.cwd(), 'dist');
+    app.use(express.static(distPath));
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+  }
+
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`[Server] SMAN1 Losari Project running on http://0.0.0.0:${PORT}`);
+  });
 }
+
+startServer();

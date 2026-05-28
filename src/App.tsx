@@ -45,6 +45,36 @@ export default function App() {
     return 'classic-scholar';
   });
 
+  // Pull konfigurasi dari server secara periodik untuk mensinkronisasi seluruh layar pengunjung secara real-time
+  React.useEffect(() => {
+    const triggerPull = () => {
+      import('./lib/apiSync')
+        .then(m => m.pullConfigFromServer((config) => {
+          setSelectedThemeId(config.themeId);
+        }))
+        .catch(err => console.error('Gagal mengambil sinkronisasi konfigurasi:', err));
+    };
+
+    // Ambil data pertama secara instan saat inisialisasi
+    triggerPull();
+
+    // Setup polling interval tiap 4 detik demi kesamaan tampilan yang real-time
+    const interval = setInterval(triggerPull, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Memantau perubahan tema secara lokal maupun dari server sync
+  React.useEffect(() => {
+    const handleThemeUpdate = () => {
+      setSelectedThemeId(localStorage.getItem('sman1losari_selected_theme_id') || 'classic-scholar');
+    };
+    window.addEventListener('sman1losari_theme_changed', handleThemeUpdate);
+    return () => {
+      window.removeEventListener('sman1losari_theme_changed', handleThemeUpdate);
+    };
+  }, []);
+
   // Security Modal States
   const [logoDownloadStatus, setLogoDownloadStatus] = useState<'idle' | 'success' | 'copied'>('idle');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -70,6 +100,7 @@ export default function App() {
     e.preventDefault();
     if (username.trim().toLowerCase() === 'admin' && password === 'admin123') {
       localStorage.setItem('sman1losari_admin_logged', 'true');
+      localStorage.setItem('sman1losari_admin_token', 'admin123_authenticated');
       setIsLoginModalOpen(false);
       setViewMode('workspace');
       setActiveTab('live-demo'); // Start viewing the live demo workspace
@@ -526,6 +557,14 @@ export default function App() {
                 onThemeSelect={(id) => {
                   setSelectedThemeId(id);
                   localStorage.setItem('sman1losari_selected_theme_id', id);
+                  window.dispatchEvent(new Event('sman1losari_theme_changed'));
+                  
+                  // Auto sync ke server jika masuk sebagai admin
+                  if (localStorage.getItem('sman1losari_admin_logged') === 'true') {
+                    import('./lib/apiSync')
+                      .then(m => m.pushLocalConfigToServer())
+                      .catch(err => console.error('Gagal mensinkronisasikan kustomisasi tema ke server:', err));
+                  }
                 }}
               />
             </motion.div>
