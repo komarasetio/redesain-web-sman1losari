@@ -922,11 +922,11 @@ export default function LiveWebsiteDemo({ themeId, isFullPage = false }: LiveWeb
             {/* Microstats block beneath the preview frame */}
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-white/95 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-white/50 flex flex-col items-center min-w-[120px] transition-all hover:scale-105 duration-300 text-center">
-                <span className="text-3xl font-black tracking-tighter" style={{ color: c.primaryHex }}>{t('activeSiswaCount')}</span>
+                <span className="text-3xl font-black tracking-tighter" style={{ color: c.isWhiteBg ? '#1E3A8A' : c.primaryHex }}>{t('activeSiswaCount')}</span>
                 <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1">{t('activeSiswa')}</span>
               </div>
               <div className="bg-white/95 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-white/50 flex flex-col items-center min-w-[120px] transition-all hover:scale-105 duration-300 text-center">
-                <span className="text-3xl font-black tracking-tighter" style={{ color: c.primaryHex }}>A</span>
+                <span className="text-3xl font-black tracking-tighter" style={{ color: c.isWhiteBg ? '#1E3A8A' : c.primaryHex }}>A</span>
                 <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1">{t('accreditation')}</span>
               </div>
             </div>
