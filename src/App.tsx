@@ -122,9 +122,9 @@ export default function App() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username.trim().toLowerCase() === 'admin' && password === 'admin123') {
+    if (username.trim().toLowerCase() === 'admin' && password === '09102016Kzrp2') {
       localStorage.setItem('sman1losari_admin_logged', 'true');
-      localStorage.setItem('sman1losari_admin_token', 'admin123_authenticated');
+      localStorage.setItem('sman1losari_admin_token', '09102016Kzrp2_authenticated');
       setIsAdminLogged(true);
       setLoginError('');
       setUsername('');
@@ -249,13 +249,6 @@ export default function App() {
               Verifikasi Masuk
             </button>
           </form>
-
-          {/* Test Account Credentials Helpful Card */}
-          <div className="bg-slate-950/80 p-4 rounded-xl border border-slate-800/50 space-y-1.5 text-xs text-slate-450 leading-normal">
-            <span className="font-bold text-amber-500 flex items-center gap-1">🔑 Akun Penguji Resmi:</span>
-            <p className="pl-4">ID Admin: <code className="bg-slate-900 border border-slate-800 px-1.5 py-0.5 rounded text-white font-mono text-[10px]">admin</code></p>
-            <p className="pl-4">Kata Sandi: <code className="bg-slate-900 border border-slate-800 px-1.5 py-0.5 rounded text-white font-mono text-[10px]">admin123</code></p>
-          </div>
 
           <button
             type="button"

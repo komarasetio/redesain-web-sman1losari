@@ -301,9 +301,9 @@ export default function CmsDashboard() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username.trim().toLowerCase() === 'admin' && password === 'admin123') {
+    if (username.trim().toLowerCase() === 'admin' && password === '09102016Kzrp2') {
       localStorage.setItem('sman1losari_admin_logged', 'true');
-      localStorage.setItem('sman1losari_admin_token', 'admin123_authenticated');
+      localStorage.setItem('sman1losari_admin_token', '09102016Kzrp2_authenticated');
       setIsAuthenticated(true);
       setLoginError('');
       setUsername('');
@@ -426,7 +426,7 @@ export default function CmsDashboard() {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={e => setPassword(e.target.value)}
-                    placeholder="Contoh: admin123"
+                    placeholder="Kata sandi..."
                     required
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 px-3 pl-10 pr-10 text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
                   />
@@ -448,12 +448,6 @@ export default function CmsDashboard() {
                 Verifikasi & Masuk
               </button>
             </form>
-
-            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1 text-[11px] text-slate-400 leading-normal">
-              <span className="font-bold text-amber-500 block">🔑 Akun Simulasi Penguji:</span>
-              <p>ID Admin: <code className="bg-slate-900 border border-slate-800 px-1 py-0.5 rounded text-white font-mono">admin</code></p>
-              <p>Kata Sandi: <code className="bg-slate-900 border border-slate-800 px-1 py-0.5 rounded text-white font-mono">admin123</code></p>
-            </div>
           </div>
 
         </div>
