@@ -36,13 +36,28 @@ import Sman1LosariLogo from './components/Sman1LosariLogo';
 import CmsDashboard from './components/CmsDashboard';
 
 export default function App() {
-  const [viewMode, setViewMode] = useState<'website' | 'workspace'>('website');
   const [activeTab, setActiveTab] = useState<'welcome' | 'live-demo' | 'color' | 'nav' | 'structure' | 'cms'>('welcome');
   const [selectedThemeId, setSelectedThemeId] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('sman1losari_selected_theme_id') || 'classic-scholar';
     }
     return 'classic-scholar';
+  });
+
+  // Track if we are on the admin path/route
+  const [isAdminPath, setIsAdminPath] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.location.pathname.startsWith('/admin') || window.location.hash === '#admin';
+    }
+    return false;
+  });
+
+  // Dynamic reactive admin logged status
+  const [isAdminLogged, setIsAdminLogged] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sman1losari_admin_logged') === 'true';
+    }
+    return false;
   });
 
   // Pull konfigurasi dari server secara periodik untuk mensinkronisasi seluruh layar pengunjung secara real-time
@@ -75,41 +90,62 @@ export default function App() {
     };
   }, []);
 
-  // Security Modal States
+  // Polling / reactive route tracking
+  React.useEffect(() => {
+    const checkUrl = () => {
+      if (typeof window !== 'undefined') {
+        const isRouteAdmin = window.location.pathname.startsWith('/admin') || window.location.hash === '#admin';
+        setIsAdminPath(isRouteAdmin);
+        setIsAdminLogged(localStorage.getItem('sman1losari_admin_logged') === 'true');
+      }
+    };
+
+    window.addEventListener('popstate', checkUrl);
+    window.addEventListener('hashchange', checkUrl);
+
+    // Dynamic timer-based recovery check in case history pushState triggers without popstate
+    const timer = setInterval(checkUrl, 500);
+
+    return () => {
+      window.removeEventListener('popstate', checkUrl);
+      window.removeEventListener('hashchange', checkUrl);
+      clearInterval(timer);
+    };
+  }, []);
+
+  // Security Login States
   const [logoDownloadStatus, setLogoDownloadStatus] = useState<'idle' | 'success' | 'copied'>('idle');
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
-
-  const handleOpenWorkspace = () => {
-    const isLogged = localStorage.getItem('sman1losari_admin_logged') === 'true';
-    if (isLogged) {
-      setViewMode('workspace');
-      setActiveTab('cms'); // Go straight to database management on direct verification
-    } else {
-      setIsLoginModalOpen(true);
-      setLoginError('');
-      setUsername('');
-      setPassword('');
-    }
-  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (username.trim().toLowerCase() === 'admin' && password === 'admin123') {
       localStorage.setItem('sman1losari_admin_logged', 'true');
       localStorage.setItem('sman1losari_admin_token', 'admin123_authenticated');
-      setIsLoginModalOpen(false);
-      setViewMode('workspace');
-      setActiveTab('live-demo'); // Start viewing the live demo workspace
+      setIsAdminLogged(true);
       setLoginError('');
       setUsername('');
       setPassword('');
+      window.dispatchEvent(new Event('sman1losari_theme_changed'));
     } else {
       setLoginError('ID Admin atau Kata Sandi salah! Hubungi Tim IT SMANSALOS.');
     }
+  };
+
+  const handleBackToWebsite = () => {
+    if (typeof window !== 'undefined') {
+      // Clear hash and route back to root index
+      if (window.location.hash === '#admin') {
+        window.location.hash = '';
+      }
+      if (window.location.pathname.startsWith('/admin')) {
+        window.history.pushState({}, '', '/');
+      }
+    }
+    setIsAdminPath(false);
   };
 
   // Quick stats computed for the redesign overview card
@@ -120,127 +156,115 @@ export default function App() {
     { title: 'Fluid Navigation Hub', desc: 'Backdrop glassmorphic navigation bar yang mengambang anggun, memudahkan pencarian SPMB seketika.' }
   ];
 
-  if (viewMode === 'website') {
+  // RENDERS PUBLIC WEBSITE GUEST FACE WITH ABSOLUTELY NO SYSTEM WORKSPACE BUTTON CLUTTER
+  if (!isAdminPath) {
     return (
       <div className="min-h-screen bg-slate-50 text-slate-900 font-sans relative" id="portal-redesign-root">
-        {/* Full-width clean redesigned website */}
+        {/* Full-width premium redesigned website, completely clean and free of evaluation toggles */}
         <LiveWebsiteDemo themeId={selectedThemeId} isFullPage={true} />
+      </div>
+    );
+  }
 
-        {/* Floating Developer/Workspace Toggle Button */}
-        <button
-          onClick={handleOpenWorkspace}
-          className="fixed bottom-6 right-6 z-50 bg-slate-900/90 backdrop-blur-md hover:bg-slate-900 text-white px-4 py-2.5 rounded-full text-[10px] font-black tracking-wider uppercase shadow-2xl border border-white/10 hover:border-white/20 flex items-center gap-2 transition-all hover:scale-105 active:scale-95 group cursor-pointer"
-          title="Buka Panel Evaluasi Redesain / Cari Tahu Perubahannya"
-          id="toggle-workspace-button"
+  // RENDER ADMIN SCOPE AREA (SECURE DESAIN / WORKSPACE FOLDER HANDLER)
+  // If not authenticated, we display a beautiful fullscreen corporate portal
+  if (!isAdminLogged) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4 relative overflow-hidden" id="admin-login-fullscreen">
+        {/* Abstract design elements matching Cirebon academic heritage */}
+        <div className="absolute top-1/4 left-10 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.97, y: 15 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          className="relative max-w-md w-full bg-slate-900 border border-slate-800/80 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8 z-10"
         >
-          <span className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse shrink-0"></span>
-          <span>Buka Panel Kontrol / Desain Hub</span>
-        </button>
+          {/* Main School header badge */}
+          <div className="text-center space-y-3">
+            <div className="mx-auto w-16 h-16 bg-slate-950 rounded-2xl flex items-center justify-center border border-slate-800 shadow-inner">
+              <Sman1LosariLogo size="sm" primaryColor="#F59E0B" accentColor="#3B82F6" />
+            </div>
+            <div className="space-y-1">
+              <h2 className="text-sm font-black text-slate-400 tracking-widest uppercase">SMAN 1 LOSARI</h2>
+              <h3 className="text-lg font-black text-white tracking-tight uppercase leading-tight">ADMIN PORTAL & DESAIN</h3>
+              <p className="text-slate-400 text-xs">Otoritas Pengelolaan Konsep & Database Sekolah</p>
+            </div>
+          </div>
 
-        {/* SECURE SLATE-DEEP LOGIN MODAL */}
-        <AnimatePresence>
-          {isLoginModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              {/* Backdrop */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsLoginModalOpen(false)}
-                className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
-              />
-              
-              {/* Modal Card container */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 15 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 15 }}
-                className="relative bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl text-slate-100 z-10 space-y-6"
-              >
-                {/* Close absolute button */}
-                <button
-                  type="button"
-                  onClick={() => setIsLoginModalOpen(false)}
-                  className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors p-1.5 rounded-full hover:bg-slate-800 cursor-pointer"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-
-                <div className="text-center space-y-1">
-                  <div className="w-12 h-12 bg-amber-500 text-slate-900 font-extrabold rounded-full flex items-center justify-center mx-auto shadow-md mb-2">
-                    <Lock className="w-5 h-5 text-slate-900" />
-                  </div>
-                  <h3 className="font-extrabold text-sm text-white tracking-tight uppercase">Verifikasi Akses Panel</h3>
-                  <p className="text-slate-400 text-[11px]">Butuh kredensial khusus untuk memodifikasi website</p>
-                </div>
-
-                {loginError && (
-                  <div className="bg-red-500/20 border border-red-500/40 text-red-200 p-2.5 rounded-xl text-xs font-semibold flex items-start gap-1.5 animate-pulse">
-                    <span>⚠️</span>
-                    <span>{loginError}</span>
-                  </div>
-                )}
-
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-300 uppercase tracking-wider block">ID Pengguna (Username)</label>
-                    <div className="relative">
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
-                        <User className="w-4 h-4" />
-                      </span>
-                      <input
-                        type="text"
-                        value={username}
-                        onChange={e => setUsername(e.target.value)}
-                        placeholder="Contoh: admin"
-                        required
-                        className="w-full bg-slate-950 border border-slate-800/80 rounded-xl py-2 px-3 pl-10 text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-300 uppercase tracking-wider block">Kata Sandi (Password)</label>
-                    <div className="relative">
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
-                        <KeyRound className="w-4 h-4" />
-                      </span>
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        placeholder="Masukkan sandi..."
-                        required
-                        className="w-full bg-slate-950 border border-slate-800/80 rounded-xl py-2 px-3 pl-10 pr-10 text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-white"
-                      >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black uppercase text-xs tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-[0.98] cursor-pointer"
-                  >
-                    <ShieldCheck className="w-4.5 h-4.5" />
-                    Konfirmasi Masuk
-                  </button>
-                </form>
-
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800/60 space-y-1 text-[11px] text-slate-400 leading-normal">
-                  <span className="font-bold text-amber-500 block">🔑 Akun Penguji:</span>
-                  <p>ID Admin: <code className="bg-slate-900 border border-slate-800 px-1 py-0.5 rounded text-white font-mono">admin</code></p>
-                  <p>Kata Sandi: <code className="bg-slate-900 border border-slate-800 px-1 py-0.5 rounded text-white font-mono">admin123</code></p>
-                </div>
-              </motion.div>
+          {loginError && (
+            <div className="bg-red-500/15 border border-red-500/30 text-red-200 p-3.5 rounded-xl text-xs font-semibold flex items-start gap-2 animate-pulse">
+              <span>⚠️</span>
+              <span>{loginError}</span>
             </div>
           )}
-        </AnimatePresence>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest block">ID Pengguna (Username)</label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+                  <User className="w-4 h-4" />
+                </span>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={e => setUsername(e.target.value)}
+                  placeholder="ID Admin..."
+                  required
+                  className="w-full bg-slate-950 border border-slate-800/80 rounded-xl py-3 px-4 pl-11 text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all font-medium"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest block">Kata Sandi (Password)</label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+                  <KeyRound className="w-4 h-4" />
+                </span>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Kata sandi..."
+                  required
+                  className="w-full bg-slate-950 border border-slate-800/80 rounded-xl py-3 px-4 pl-11 pr-11 text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all font-medium"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-white"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black uppercase text-xs tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/10 active:scale-[0.98] cursor-pointer"
+            >
+              <ShieldCheck className="w-4.5 h-4.5" />
+              Verifikasi Masuk
+            </button>
+          </form>
+
+          {/* Test Account Credentials Helpful Card */}
+          <div className="bg-slate-950/80 p-4 rounded-xl border border-slate-800/50 space-y-1.5 text-xs text-slate-450 leading-normal">
+            <span className="font-bold text-amber-500 flex items-center gap-1">🔑 Akun Penguji Resmi:</span>
+            <p className="pl-4">ID Admin: <code className="bg-slate-900 border border-slate-800 px-1.5 py-0.5 rounded text-white font-mono text-[10px]">admin</code></p>
+            <p className="pl-4">Kata Sandi: <code className="bg-slate-900 border border-slate-800 px-1.5 py-0.5 rounded text-white font-mono text-[10px]">admin123</code></p>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleBackToWebsite}
+            className="w-full text-center text-xs text-slate-500 hover:text-white transition-colors cursor-pointer py-1 font-bold flex items-center justify-center gap-1 hover:underline"
+          >
+            ← Kembali ke Portal Utama Sekolah
+          </button>
+        </motion.div>
       </div>
     );
   }
@@ -288,7 +312,7 @@ export default function App() {
           {/* Quick theme status tracker + Public Website Quick Switch */}
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setViewMode('website')}
+              onClick={handleBackToWebsite}
               className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl shadow-lg transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95 text-center uppercase tracking-wider"
             >
               <CheckCircle className="w-4 h-4 shrink-0" /> Lihat Situs Utama
